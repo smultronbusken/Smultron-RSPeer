@@ -1,27 +1,18 @@
 package org.smultron.scripts.newbie;
 
-import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.Varps;
-import org.rspeer.runetek.api.component.ItemTables;
-import org.rspeer.runetek.api.scene.SceneObjects;
 import org.rspeer.script.ScriptMeta;
-import org.rspeer.ui.Log;
 import org.smultron.framework.MullbarGUI;
-import org.smultron.framework.info.AllQuest;
+import org.smultron.framework.info.Quest;
 import org.smultron.framework.tasks.FunctionalTask;
 import org.smultron.framework.tasks.Task;
-import org.smultron.framework.thegreatforest.BinaryBranchBuilder;
 import org.smultron.missions.tutorialisland.TutorialIsland;
 import org.smultron.framework.MullbarScript;
 
-import org.smultron.framework.content.banking.BankCache;
-import org.smultron.framework.thegreatforest.TreeNode;
 import org.smultron.framework.info.KnownVarp;
 import org.smultron.quests.cooksassistant.CooksAssistant;
 import org.smultron.quests.romeoandjuliet.RomeoAndJuliet;
 import org.smultron.quests.xmarksthespot.XMarksTheSpot;
-
-import java.util.function.BooleanSupplier;
 
 @ScriptMeta(developer = "smultron",
 	desc = "Can be started anytime. No prerequisites. Completes Tutorial Island, Cooks Assistant, Dorics Quest, " +
@@ -39,11 +30,11 @@ public class Newbie extends MullbarScript
 	    return new TutorialIsland(this, accountName);
 	}
 	Task quest;
-	if(Varps.get(AllQuest.COOKS_ASSISTANT.getVarpbit()) != AllQuest.COOKS_ASSISTANT.getStages())
+	if(Varps.get(Quest.COOKS_ASSISTANT.getVarpbit()) != Quest.COOKS_ASSISTANT.getStages())
 	    return new CooksAssistant(this);
-	else if(Varps.get(AllQuest.ROMEO_AND_JULIET.getVarpbit()) != AllQuest.ROMEO_AND_JULIET.getStages())
+	else if(Varps.get(Quest.ROMEO_AND_JULIET.getVarpbit()) != Quest.ROMEO_AND_JULIET.getStages())
 	    return new RomeoAndJuliet(this);
-	else if(Varps.get(AllQuest.X_MARKS_THE_SPOT.getVarpbit()) < 10)
+	else if(Varps.get(Quest.X_MARKS_THE_SPOT.getVarpbit()) < 10)
 	    return new XMarksTheSpot(this);
 	else
 	    quest = new FunctionalTask(() -> setStopping(true));

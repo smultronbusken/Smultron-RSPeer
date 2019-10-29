@@ -1,18 +1,16 @@
 package org.smultron.quests.impcatcher;
 
 import org.rspeer.runetek.api.Varps;
+import org.rspeer.runetek.api.movement.position.Area;
+import org.rspeer.runetek.api.movement.position.Position;
+import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
-import org.smultron.framework.Task;
-import org.smultron.framework.TaskListener;
-import org.smultron.framework.tasks.dialog.DoDialogTree;
-import org.smultron.framework.tasks.item.GatherItems;
-import org.smultron.framework.tasks.movement.MoveTo;
+import org.smultron.framework.Location;
+import org.smultron.framework.content.dialog.ProcessDialogTree;
+import org.smultron.framework.info.Quest;
+import org.smultron.framework.tasks.TaskListener;
 import org.smultron.framework.thegreatforest.TreeNode;
 import org.smultron.framework.thegreatforest.TreeTask;
-import org.smultron.framework.thegreatforest.QuestBranch;
-import org.smultron.framework.thegreatforest.ValidationBranch;
-import org.smultron.info.FreeQuest;
-import org.smultron.info.Location;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
@@ -21,8 +19,15 @@ import java.util.HashMap;
 
 public class ImpCatcher extends TreeTask
 {
-    private int varpBit = FreeQuest.IMP_CATCHER.getVarpbit();
-    private int questStages = FreeQuest.IMP_CATCHER.getStages();
+    private int varpBit = Quest.IMP_CATCHER.getVarpbit();
+    private int questStages = Quest.IMP_CATCHER.getStages();
+
+    private static final Location WIZARD_MIZGOG = Location.location(Area.polygonal(new Position(3107, 3162, 2),
+										   new Position(3107, 3156, 2),
+										   new Position(3103, 3159, 2),
+										   new Position(3102, 3164, 2),
+										   new Position(3103, 3167, 2),
+										   new Position(3105, 3167, 2)), "Wizard Mizgog");
 
     public ImpCatcher(final TaskListener listener) {
 	super(listener, "Completing Imp Catcher");
@@ -32,15 +37,16 @@ public class ImpCatcher extends TreeTask
         /*
         Speak with Wizard Mizgog
          */
-	Deque<String> dialogStart = new ArrayDeque<>();
-	dialogStart.addLast("Give me a quest please.");
-	TreeNode dialog = new DoDialogTree(dialogStart, "Wizard Mizgog");
+	TreeNode dialog = new ProcessDialogTree("Give me a quest please.", () -> Npcs.getNearest("Wizard Mizgsog"));
+
+
 	TreeNode startQuest = new ValidationBranch(dialog, new MoveTo(Location.WIZARD_MIZGOG, 1))
 	{
 	    @Override public boolean validate() {
 		return Location.WIZARD_MIZGOG.getArea().contains(Players.getLocal());
 	    }
 	};
+
 
 	/*
 	Get all beads

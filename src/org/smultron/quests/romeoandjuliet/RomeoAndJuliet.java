@@ -12,7 +12,7 @@ import org.smultron.framework.content.MoveTo;
 import org.smultron.framework.content.dialog.ProcessDialogTree;
 import org.smultron.framework.content.dialog.TalkToNpc;
 import org.smultron.framework.content.item.GatherItem;
-import org.smultron.framework.info.AllQuest;
+import org.smultron.framework.info.Quest;
 import org.smultron.framework.info.CommonLocation;
 import org.smultron.framework.tasks.Task;
 import org.smultron.framework.tasks.TaskListener;
@@ -31,8 +31,8 @@ import java.util.function.Supplier;
 public class RomeoAndJuliet extends TreeTask
 {
 
-    private int varpBit = AllQuest.ROMEO_AND_JULIET.getVarpbit();
-    private int questStages = AllQuest.ROMEO_AND_JULIET.getStages();
+    private int varpBit = Quest.ROMEO_AND_JULIET.getVarpbit();
+    private int questStages = Quest.ROMEO_AND_JULIET.getStages();
 
     private static final Supplier<Npc> JULIET = () -> Npcs.getNearest("Juliet");
     private static final Supplier<Npc> ROMEO = () -> Npcs.getNearest("Romeo");

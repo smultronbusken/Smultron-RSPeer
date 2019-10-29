@@ -10,7 +10,7 @@ import org.smultron.framework.content.dialog.TalkToNpc;
 import org.smultron.framework.content.item.gathering.GatherBucketOfMilk;
 import org.smultron.framework.content.item.gathering.GatherPotOfFlour;
 import org.smultron.framework.content.item.gathering.GatheringTasks;
-import org.smultron.framework.info.AllQuest;
+import org.smultron.framework.info.Quest;
 import org.smultron.framework.info.CommonLocation;
 import org.smultron.framework.tasks.ArrayTask;
 import org.smultron.framework.tasks.FunctionalTask;
@@ -30,7 +30,7 @@ import java.util.function.BooleanSupplier;
  */
 public class CooksAssistant extends TreeTask
 {
-    private final int varp = AllQuest.COOKS_ASSISTANT.getVarpbit();
+    private final int varp = Quest.COOKS_ASSISTANT.getVarpbit();
 
     public CooksAssistant(final TaskListener listener)
     {
@@ -107,6 +107,6 @@ public class CooksAssistant extends TreeTask
     }
 
     @Override public boolean validate() {
-        return Varps.get(varp) == AllQuest.COOKS_ASSISTANT.getStages();
+        return Varps.get(varp) == Quest.COOKS_ASSISTANT.getStages();
     }
 }

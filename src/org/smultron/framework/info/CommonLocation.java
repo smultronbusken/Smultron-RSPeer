@@ -41,12 +41,6 @@ public enum CommonLocation implements Location
 
     VEOS(Area.rectangular(3226, 3242, 3231, 3239), "Veos at Lumbridge"),
 
-    DORICS_HOUSE(Area.rectangular(2950, 3449, 2953, 3452), "Doric"),
-
-    WIZARD_MIZGOG(Area.polygonal(new Position(3107, 3162, 2), new Position(3107, 3156, 2), new Position(3103, 3159, 2),
-                                 new Position(3102, 3164, 2), new Position(3103, 3167, 2), new Position(3105, 3167, 2)),
-                  "Wizard Mizgog"),
-
     VARROCK_JULIET(Area.rectangular(3155, 3425, 3161, 3426, 1), "Juliet"),
 
     VARROCK_ROMEO(Area.polygonal(new Position(3222, 3436, 0), new Position(3206, 3436, 0), new Position(3206, 3421, 0),

@@ -3,7 +3,7 @@ package org.smultron.framework.info;
 /**
  * Thanks to @Chesapeake
  */
-public enum AllQuest
+public enum Quest
 {
 
     BLACK_KNIGHTS_FORTRESS(299, 130, 4),
@@ -324,7 +324,7 @@ public enum AllQuest
 
     private final int stages;
 
-    AllQuest(int id, int varpbit, int stages) {
+    Quest(int id, int varpbit, int stages) {
         this.id = id;
         this.varpbit = varpbit;
         this.stages = stages;

@@ -13,7 +13,7 @@ import org.smultron.framework.content.MoveTo;
 import org.smultron.framework.content.dialog.ProcessDialogTree;
 import org.smultron.framework.content.dialog.TalkToNpc;
 import org.smultron.framework.content.item.GatherItem;
-import org.smultron.framework.info.AllQuest;
+import org.smultron.framework.info.Quest;
 import org.smultron.framework.info.CommonLocation;
 import org.smultron.framework.tasks.Task;
 import org.smultron.framework.tasks.TaskListener;
@@ -31,8 +31,8 @@ import java.util.function.Supplier;
  */
 public class XMarksTheSpot extends TreeTask
 {
-    private int varpBit = AllQuest.X_MARKS_THE_SPOT.getVarpbit();
-    private int questStages = AllQuest.X_MARKS_THE_SPOT.getStages();
+    private int varpBit = Quest.X_MARKS_THE_SPOT.getVarpbit();
+    private int questStages = Quest.X_MARKS_THE_SPOT.getStages();
 
     private static final Supplier<Npc> VEOS = () -> Npcs.getNearest("Veos");
 
