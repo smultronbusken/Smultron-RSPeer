@@ -1,5 +1,6 @@
 package org.smultron.quests.restlessghost;
 
+import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.Varps;
 import org.rspeer.runetek.api.commons.Time;
@@ -32,6 +33,7 @@ import org.smultron.framework.thegreatforest.VarpBranch;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 /**
  * TODO: Make sure we are wearing the amulet does not work if the user pauses midquest and drops it
@@ -52,12 +54,15 @@ public class RestlessGhost extends TreeTask
         TreeNode atAereck = new InArea(talkAereck, CommonLocation.LUMBRIDGE_CHURCH, 3);
         quest.put(0, atAereck);
 
-        String[] dialogUrhney = new String[] { "Father Aereck sent me to talk to you.", "He's got a ghost haunting his graveyard." };
+        String[] dialogUrhney = new String[] {
+                "Father Aereck sent me to talk to you.",
+                "He's got a ghost haunting his graveyard." };
         TreeNode talkUrhney = new ProcessDialogTree(dialogUrhney, () -> Npcs.getNearest("Father Urhney"));
         TreeNode atUrhney = new InArea(talkUrhney, CommonLocation.LUMBRIDGE_FATHER_URHNEY, 1);
         quest.put(1, atUrhney);
 
-        TreeNode talkToGhost = new ProcessDialogTree("Yep, now tell me what the problem is.", () -> Npcs.getNearest("Restless ghost"));
+        Supplier<Npc> restlessGhost = () -> Npcs.getNearest("Restless ghost");
+        TreeNode talkToGhost = new ProcessDialogTree("Yep, now tell me what the problem is.", restlessGhost);
         Task openCoffin = new InteractWith<>("Search", () -> SceneObjects.getNearest("Coffin"));
         TreeNode isCoffinOpen = BinaryBranchBuilder.getNewInstance()
                 .successNode(talkToGhost)
@@ -82,10 +87,14 @@ public class RestlessGhost extends TreeTask
     }
 
     private TreeNode hasGhostspeakAmulet(TreeNode successNode) {
-        BooleanSupplier inventoryContainsItem = () -> Inventory.contains(4250, 552) && ItemTables.lookup(ItemTables.EQUIPMENT).contains(4250, 552);
+        BooleanSupplier inInventoryOrEquipped = () -> {
+            boolean inInventory = Inventory.contains(4250, 552);
+            boolean isEquipped = ItemTables.lookup(ItemTables.EQUIPMENT).contains(4250, 522);
+            return isEquipped || inInventory;
+        };
         TreeNode hasItems = BinaryBranchBuilder.getNewInstance()
                 .successNode(successNode)
-                .setValidation(inventoryContainsItem)
+                .setValidation(inInventoryOrEquipped)
                 .failureNode(new FunctionalTask(() -> Log.severe("I have note amulet"))) // TODO
                 .build();
         return hasItems;
