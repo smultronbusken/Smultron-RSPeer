@@ -1,21 +1,30 @@
 package org.smultron.quests.impcatcher;
 
+import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.Varps;
+import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
 import org.smultron.framework.Location;
 import org.smultron.framework.content.dialog.ProcessDialogTree;
+import org.smultron.framework.content.dialog.TalkToNpc;
+import org.smultron.framework.content.item.GatherItems;
 import org.smultron.framework.info.Quest;
+import org.smultron.framework.tasks.Task;
 import org.smultron.framework.tasks.TaskListener;
+import org.smultron.framework.thegreatforest.BinaryBranchBuilder;
+import org.smultron.framework.thegreatforest.InArea;
 import org.smultron.framework.thegreatforest.TreeNode;
 import org.smultron.framework.thegreatforest.TreeTask;
+import org.smultron.framework.thegreatforest.VarpBranch;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 public class ImpCatcher extends TreeTask
 {
@@ -34,41 +43,32 @@ public class ImpCatcher extends TreeTask
     }
 
     @Override public TreeNode onCreateRoot() {
-        /*
-        Speak with Wizard Mizgog
-         */
-	TreeNode dialog = new ProcessDialogTree("Give me a quest please.", () -> Npcs.getNearest("Wizard Mizgsog"));
+        VarpBranch quest = new VarpBranch(varpBit);
+	Supplier<Npc> mizgog = () -> Npcs.getNearest("Wizard Mizgog");
 
+	TreeNode startDialog = new ProcessDialogTree("Give me a quest please.", mizgog);
+	TreeNode atMizgogStart = new InArea(startDialog, WIZARD_MIZGOG, 1);
+	quest.put(0, hasItems(atMizgogStart));
 
-	TreeNode startQuest = new ValidationBranch(dialog, new MoveTo(Location.WIZARD_MIZGOG, 1))
-	{
-	    @Override public boolean validate() {
-		return Location.WIZARD_MIZGOG.getArea().contains(Players.getLocal());
-	    }
-	};
+	TreeNode endDialog = new TalkToNpc(mizgog);
+	TreeNode atMizgogEnd = new InArea(endDialog, WIZARD_MIZGOG, 1);
+	quest.put(1, hasItems(atMizgogEnd));
 
-
-	/*
-	Get all beads
-	 */
-	Task getItems = new GatherItems(Arrays.asList("Black bead", "Yellow bead", "Red bead", "White bead"), null, true);
-	TreeNode confirmWeHaveItems = new ValidationBranch(startQuest, getItems)
-	{
-	    @Override public boolean validate() {
-		return getItems.validate();
-	    }
-	};
-
-        /*
-	Create the quest branch
-	 */
-	HashMap<Integer, TreeNode> questBranches = new HashMap<>();
-	questBranches.put(0, confirmWeHaveItems);
-	TreeNode questTree = new QuestBranch(varpBit, questBranches);
-	return questTree;
+	return quest;
     }
 
     @Override public boolean validate() {
 	return Varps.get(varpBit) == questStages;
+    }
+
+    private TreeNode hasItems(TreeNode successNode) {
+        String[] items = new String[] { "Black bead", "Yellow bead", "Red bead", "White bead" };
+	TreeNode getItems = new GatherItems(Arrays.asList(items), null, true);
+	TreeNode hasItems = BinaryBranchBuilder.getNewInstance()
+		.successNode(successNode)
+		.setValidation(() -> Inventory.contains(items))
+		.failureNode(getItems)
+		.build();
+	return hasItems;
     }
 }
