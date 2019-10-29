@@ -29,7 +29,7 @@ import org.smultron.framework.thegreatforest.VarpBranch;
 
 import java.util.function.Supplier;
 
-@ScriptMeta(name = "Halloween 2019", developer = "Smultron", desc = "Completes the halloween 2019 event")
+@ScriptMeta(name = "Halloween 2019", developer = "Smultron", desc = "Completes the halloween 2019 event", version = 1.1)
 public class Hallowen extends MullbarScript {
 	private static final Supplier<Npc> SNAILNECK = () -> Npcs.getNearest("Snailneck");
 	private static final Supplier<Npc> EPIC_MAGER = () -> Npcs.getNearest("epic mager34");

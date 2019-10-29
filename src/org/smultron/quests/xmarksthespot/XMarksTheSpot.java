@@ -91,7 +91,7 @@ public class XMarksTheSpot extends TreeTask {
 	public boolean validate() {
 		// For some reason the varpbit doesnt stay on a value after completing the quest
 		// But it does seem to always stay over 7
-		return Varps.get(Quest.X_MARKS_THE_SPOT.getVarpbit()) > 7;
+		return Varps.get(Quest.X_MARKS_THE_SPOT.getVarpbit()) > 19;
 	}
 
 	private TreeNode walkToAndDig(Position cluePosition) {

@@ -62,7 +62,7 @@ public abstract class MullbarScript extends Script implements TaskListener {
 
 	/**
 	 * Called once in the {@link MullbarScript} constructor.
-	 * Override and return null if no GUI is wanted.
+	 * Override and return null if no SimpleTutorialIslandGUI is wanted.
 	 *
 	 * @return your custom {@link MullbarGUI}
 	 */
