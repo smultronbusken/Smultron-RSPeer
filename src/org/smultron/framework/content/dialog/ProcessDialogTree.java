@@ -69,7 +69,7 @@ public class ProcessDialogTree extends BinaryBranch {
 	 */
 	private TreeNode processDialog() {
 		if (Dialog.canContinue())
-			return new LeafNode(processContinue());
+			return new LeafNode(ProcessContinue.processContinue());
 		else
 			return new LeafNode(processOption());
 	}
@@ -89,19 +89,6 @@ public class ProcessDialogTree extends BinaryBranch {
 		});
 		processOption.setName("I want to say " + currentOption);
 		return processOption;
-	}
-
-	private static Task processContinue() {
-		return new FunctionalTask(() -> {
-			if (Dialog.canContinue()) {
-				if (!Dialog.processContinue()) {
-					Dialog.getContinue().click();
-				}
-				Time.sleepUntil(() -> !Dialog.isProcessing(), (int) (MullbarRand.getScalar() * 500), (int) (MullbarRand.getScalar() * 1000));
-			} else {
-				Log.severe("Cant continue");
-			}
-		}).setName("Continuing dialog...");
 	}
 
 	private String getNextOption() {

@@ -23,21 +23,9 @@ public class TalkToNpc extends BinaryBranch {
 	 */
 	public TalkToNpc(Supplier<Npc> npc) {
 		super();
-		setSuccessNode(() -> new LeafNode(processContinue()));
+		setSuccessNode(() -> new LeafNode(ProcessContinue.processContinue()));
 		setValidation(() -> Dialog.isOpen() || Game.isInCutscene());
 		setFailureNode(() -> new LeafNode(new InteractWith<>("Talk-to", npc)));
 	}
 
-	private static Task processContinue() {
-		return new FunctionalTask(() -> {
-			if (Dialog.canContinue()) {
-				if (!Dialog.processContinue()) {
-					Dialog.getContinue().click();
-				}
-				Time.sleepUntil(() -> !Dialog.isProcessing(), (int) (MullbarRand.getScalar() * 500), (int) (MullbarRand.getScalar() * 1000));
-			} else {
-				Log.severe("Cant continue");
-			}
-		}).setName("Continuing dialog...");
-	}
 }

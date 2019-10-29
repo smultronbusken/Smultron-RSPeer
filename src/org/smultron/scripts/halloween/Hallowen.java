@@ -56,9 +56,9 @@ public class Hallowen extends MullbarScript {
 		quest.put(246786, TALK_WITH_EPIC_MAGER);
 		quest.put(254978, gatherSheetsSection());
 
-	/*
-	Make and wear the costume
-	 */
+		/*
+		Make and wear the costume
+		 */
 		Supplier<Item> knife = () -> Inventory.getFirst(item -> item.getName().equals("Knife"));
 		Supplier<Item> sheets = () -> Inventory.getFirst(item -> item.getName().equals("White bed sheets"));
 		Task make = new UseItemOn<>(knife, sheets);
@@ -72,9 +72,9 @@ public class Hallowen extends MullbarScript {
 				.build();
 		quest.put(295938, new InArea(equipOrTalk, START_AREA, 1));
 
-	/*
-	Answer the riddles
-	 */
+		/*
+		Answer the riddles
+		 */
 		quest.put(328706, TALK_WITH_SNAILNECK);
 		String[] answers = new String[]{
 				"Goblin mail.",
@@ -92,9 +92,9 @@ public class Hallowen extends MullbarScript {
 		quest.put(492546, takeAndIgnitePowder());
 		quest.put(2589698, stealShinyGlass());
 
-	/*
-	Finish up
-	 */
+		/*
+		Finish up
+		 */
 		quest.put(533506, TALK_WITH_SNAILNECK);
 		quest.put(615426, CONTINUE_DIALOG);
 		quest.put(656386, CONTINUE_DIALOG);
