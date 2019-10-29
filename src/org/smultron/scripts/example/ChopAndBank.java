@@ -1,6 +1,9 @@
 package org.smultron.scripts.example;
 
+import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.SceneObject;
+import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.ItemTables;
 import org.rspeer.runetek.api.component.tab.Inventory;
@@ -12,6 +15,7 @@ import org.smultron.framework.content.Equip;
 import org.smultron.framework.content.InteractWith;
 import org.smultron.framework.content.banking.GetItemFromBank;
 import org.smultron.framework.content.banking.UnbankInventory;
+import org.smultron.framework.tasks.FunctionalTask;
 import org.smultron.framework.tasks.Task;
 import org.smultron.framework.tasks.TaskListener;
 import org.smultron.framework.thegreatforest.*;
@@ -30,46 +34,26 @@ public class ChopAndBank extends TreeTask {
 
 	@Override
 	public TreeNode onCreateRoot() {
-		Task unbank = new UnbankInventory(null);
-
 		Task chopTree = new InteractWith<>("Chop down", TREE_SUPPLIER);
 		TreeNode atTreeArea = new InArea(chopTree, Location.location(TREE_AREA, "the tree area"), 5);
+		Task dropInventory = new FunctionalTask(() -> {
+			for(Item log : Inventory.getItems(item -> item.getName().equals("Logs"))){
+				log.interact("Drop");
+				Time.sleep(Random.nextInt(200, 900));
+			}
+		});
 
 		TreeNode isInventoryFull = BinaryBranchBuilder.getNewInstance()
-				.successNode(atTreeArea) // If Inventory::isFull returns true
+				.successNode(dropInventory) // If Inventory::isFull returns true
 				.setValidation(Inventory::isFull)
-				.failureNode(chopTree) // If Inventory::isFull returns false
+				.failureNode(atTreeArea) // If Inventory::isFull returns false
 				.build();
-
-		return axeEquipped(isInventoryFull);
+		return isInventoryFull;
 	}
 
 	@Override
 	public boolean validate() {
 		// The task will run forever
 		return false;
-	}
-
-	private TreeNode axeEquipped(TreeNode successNode) {
-		BooleanSupplier isAxeEquipped = () -> {
-			RSItemTable equipment = ItemTables.lookup(ItemTables.EQUIPMENT);
-			return equipment != null && equipment.contains(1351);
-		};
-		Task getAxe = new GetItemFromBank(null, "Bronze axe", Bank.WithdrawMode.ITEM, 1);
-		Task equipAxe = new InteractWith<>("Wield", () -> Inventory.getFirst("Bronze axe"));
-
-		TreeNode shouldGetAxe = BinaryBranchBuilder.getNewInstance()
-				.successNode(equipAxe)
-				.setValidation(() -> Inventory.contains("Bronze axe"))
-				.failureNode(getAxe)
-				.build();
-
-		TreeNode shouldEquipAxe = BinaryBranchBuilder.getNewInstance()
-				.successNode(successNode)
-				.setValidation(isAxeEquipped)
-				.failureNode(shouldGetAxe)
-				.build();
-
-		return shouldEquipAxe;
 	}
 }
