@@ -7,38 +7,37 @@ import java.util.function.BooleanSupplier;
 /**
  * The most simple but very convenient {@link Task}
  */
-public class FunctionalTask extends Task
-{
-    private Runnable execute;
-    private BooleanSupplier validate;
+public class FunctionalTask extends Task {
+	private Runnable execute;
+	private BooleanSupplier validate;
 
-    /**
-     * @param validate
-     * @param execute
-     */
-    public FunctionalTask(final Runnable execute, final BooleanSupplier validate)
-    {
-	super(null, "");
-	this.execute = execute;
-	this.validate = validate;
-    }
+	/**
+	 * @param validate
+	 * @param execute
+	 */
+	public FunctionalTask(final Runnable execute, final BooleanSupplier validate) {
+		super(null, "");
+		this.execute = execute;
+		this.validate = validate;
+	}
 
-    /**
-     * Will always validate {@code false}
-     */
-    public FunctionalTask(final Runnable execute)
-    {
-	super(null, "");
-	this.execute = execute;
-	this.validate = () -> false;
-    }
+	/**
+	 * Will always validate {@code false}
+	 */
+	public FunctionalTask(final Runnable execute) {
+		super(null, "");
+		this.execute = execute;
+		this.validate = () -> false;
+	}
 
-    @Override public boolean validate() {
-	return validate.getAsBoolean();
-    }
+	@Override
+	public boolean validate() {
+		return validate.getAsBoolean();
+	}
 
-    @Override public int execute() {
-        execute.run();
-    	return MullbarRand.nextInt(600, 1200);
-    }
+	@Override
+	public int execute() {
+		execute.run();
+		return MullbarRand.nextInt(600, 1200);
+	}
 }

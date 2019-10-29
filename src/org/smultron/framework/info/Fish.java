@@ -6,8 +6,7 @@ import org.rspeer.runetek.api.component.tab.Skills;
 /**
  * Thanks to @Roma
  */
-public enum Fish
-{
+public enum Fish {
 	SHRIMP("Small fishing net", "Fishing spot", "Net", "", 1),
 	SARDINE("Sardine", "Raw sardine", "Fishing rod", "Bait", 5),
 	KARAMBWANJI("Karambwanji", "Raw karambwanji", "Net", "", 5),
@@ -32,7 +31,7 @@ public enum Fish
 
 	@Override
 	public String toString() {
-	    return name().substring(0,1).toUpperCase() + name().substring(1).toLowerCase().replaceAll("_", " ");
+		return name().substring(0, 1).toUpperCase() + name().substring(1).toLowerCase().replaceAll("_", " ");
 	}
 
 	private final String equipment, spot, action, bait;
@@ -46,15 +45,25 @@ public enum Fish
 		this.bait = bait;
 	}
 
-	public String getEquiptment() { return equipment; }
+	public String getEquiptment() {
+		return equipment;
+	}
 
-	public String getSpot() { return spot; }
+	public String getSpot() {
+		return spot;
+	}
 
-	public String getAction() { return action; }
+	public String getAction() {
+		return action;
+	}
 
-	public String getBait() { return bait; }
+	public String getBait() {
+		return bait;
+	}
 
-	public int getRequiredLevel() { return requiredLevel; }
+	public int getRequiredLevel() {
+		return requiredLevel;
+	}
 
 	public boolean isAccessible() {
 		return Skills.getCurrentLevel(Skill.FISHING) >= requiredLevel;

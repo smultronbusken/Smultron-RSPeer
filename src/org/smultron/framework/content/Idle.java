@@ -6,21 +6,22 @@ import org.smultron.framework.tasks.Task;
 /**
  * A task which does nothing.
  */
-public class Idle extends Task
-{
-    public Idle() {
-	super("Chilling");
-    }
+public class Idle extends Task {
+	public Idle() {
+		super("Chilling");
+	}
 
-    public Idle(String name) {
-	super(name);
-    }
+	public Idle(String name) {
+		super(name);
+	}
 
-    @Override public boolean validate() {
-	return false;
-    }
+	@Override
+	public boolean validate() {
+		return false;
+	}
 
-    @Override public int execute() {
-	return MullbarRand.nextInt(200, 1200);
-    }
+	@Override
+	public int execute() {
+		return MullbarRand.nextInt(200, 1200);
+	}
 }
