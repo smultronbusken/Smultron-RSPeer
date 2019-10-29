@@ -2,7 +2,6 @@ package org.smultron.quests.sheepshearer;
 
 import org.rspeer.runetek.providers.RSGrandExchangeOffer;
 import org.rspeer.ui.Log;
-import org.smultron.framework.content.grandexchange.CollectOffers;
 import org.smultron.framework.content.grandexchange.MakeGEOfferBuilder;
 import org.smultron.framework.tasks.ArrayTask;
 import org.smultron.framework.tasks.Task;
@@ -24,14 +23,13 @@ public class ShearSheepAndSell extends ArrayTask
 	Task shear = new ShearSheep(amount, this);
 	Task[] tasks = new Task[]{
 		shear,
-		MakeGEOfferBuilder.getInstance()
+		MakeGEOfferBuilder.getNewInstance()
 		    .setOfferType(RSGrandExchangeOffer.Type.SELL)
 		    .setItem("Wool")
 		    .setQuantity(MakeGEOffer.ALL)
 		    .setWaitForCompletion(true)
 		    .setListener(this)
-		    .build(),
-		new CollectOffers(this)
+		    .build()
 	};
 	return tasks;
     }

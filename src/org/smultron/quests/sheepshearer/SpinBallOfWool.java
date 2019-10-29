@@ -5,6 +5,7 @@ import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.Production;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.scene.SceneObjects;
+import org.smultron.framework.info.CommonLocation;
 import org.smultron.framework.tasks.Task;
 import org.smultron.framework.tasks.TaskListener;
 import org.smultron.framework.content.UseItemOn;
@@ -22,22 +23,22 @@ public class SpinBallOfWool extends TreeTask
     }
 
     @Override public TreeNode onCreateRoot() {
-	Task openSpinWheel = new UseItemOn<SceneObject>(null, () -> Inventory.getFirst("Wool"), () -> SceneObjects.getNearest("Spinning wheel"));
+	Task openSpinWheel = new UseItemOn<SceneObject>(() -> Inventory.getFirst("Wool"), () -> SceneObjects.getNearest("Spinning wheel"));
 	Task produce = new ProduceItem(null, "Ball of wool");
-        Task fillInventory = new GetItemFromBank(null, "Wool", Bank.WithdrawMode.ITEM, 28);
+        Task fillInventory = new GetItemFromBank(null, "Wool", Bank.WithdrawMode.ITEM, 20);
 
-        TreeNode isProductionScreenOpen = BinaryBranchBuilder.getInstance()
+        TreeNode isProductionScreenOpen = BinaryBranchBuilder.getNewInstance()
 		.successNode(produce)
 		.setValidation(Production::isOpen)
 		.failureNode(openSpinWheel)
 		.build();
-        TreeNode atSpinningWheel = new InArea(isProductionScreenOpen, Region.LUMBRIDGE_SPINNINGWHEEL, 1);
-        TreeNode hasWool = BinaryBranchBuilder.getInstance()
+        TreeNode atSpinningWheel = new InArea(isProductionScreenOpen, CommonLocation.LUMBRIDGE_SPINNINGWHEEL, 1);
+
+        TreeNode hasWool = BinaryBranchBuilder.getNewInstance()
 		.successNode(atSpinningWheel)
 		.setValidation(() -> Inventory.contains("Wool"))
 		.failureNode(fillInventory)
 		.build();
-
 	return hasWool;
     }
 

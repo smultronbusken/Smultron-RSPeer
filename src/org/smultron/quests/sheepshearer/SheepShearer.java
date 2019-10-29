@@ -1,29 +1,32 @@
 package org.smultron.quests.sheepshearer;
 
+import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.Varps;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
-import org.smultron.framework.SubScript;
-import org.smultron.framework.Task;
-import org.smultron.framework.TaskListener;
-import org.smultron.framework.tasks.DoDialogTree;
-import org.smultron.framework.tasks.banking.GetItemFromBank;
-import org.smultron.framework.tasks.movement.MoveTo;
-import org.smultron.framework.tasks.SpinBallOfWool;
-import org.smultron.framework.tasks.dialog.TalkToNpcAndContinue;
-import org.smultron.framework.tasks.item.GatherItem;
+import org.smultron.framework.content.banking.GetItemFromBank;
+import org.smultron.framework.content.dialog.ProcessDialogTree;
+import org.smultron.framework.content.dialog.TalkToNpc;
+import org.smultron.framework.content.random.ShearSheep;
+import org.smultron.framework.info.CommonLocation;
+import org.smultron.framework.info.Quest;
+import org.smultron.framework.tasks.ArrayTask;
+import org.smultron.framework.tasks.Task;
+import org.smultron.framework.tasks.TaskListener;
+import org.smultron.framework.thegreatforest.BinaryBranchBuilder;
+import org.smultron.framework.thegreatforest.InArea;
 import org.smultron.framework.thegreatforest.LeafNode;
 import org.smultron.framework.thegreatforest.TreeNode;
 import org.smultron.framework.thegreatforest.TreeTask;
 import org.smultron.framework.thegreatforest.BinaryBranch;
-import org.smultron.framework.thegreatforest.QuestBranch;
-import org.smultron.info.FreeQuest;
-import org.smultron.info.Location;
+import org.smultron.framework.thegreatforest.VarpBranch;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 /**
  * TODO: Movement after shearing is fkced.
@@ -31,91 +34,60 @@ import java.util.HashMap;
 public class SheepShearer extends TreeTask
 {
 
-    private final int varp = FreeQuest.SHEEP_SHEARER.getVarpbit();
+    private static final Supplier<Npc> FRED_THE_FARMER =  () -> Npcs.getNearest("Fred the Farmer");
 
     public SheepShearer(final TaskListener listener) {
 	super(listener, "Completing Sheep Shearer.");
     }
 
     @Override public TreeNode onCreateRoot() {
-	HashMap<Integer, TreeNode> varpTable = new HashMap<>();
-	TreeNode start = new LeafNode(new StartQuest(null));
-	varpTable.put(0, start);
+	VarpBranch quest = new VarpBranch(Quest.SHEEP_SHEARER.getVarpbit());
+
+	String[] dialogOption = new String[]{ "I'm looking for a quest.", "Yes okay. I can do that." };
+	TreeNode talkToFred = new ProcessDialogTree(dialogOption, FRED_THE_FARMER);
+	TreeNode atFred = new InArea(talkToFred, CommonLocation.LUMBRIDGE_FREDTHEFARMER, 1);
+	quest.put(0, atFred);
 
 	/*
 	 Shear the sheeps, then spin the balls
 	 */
-	Task getWool = new SubScript(null, "")
+	Task getWool = new ArrayTask(null, "")
 	{
 	    @Override protected Task[] createTasks() {
-		return new Task[] {
-		    new GatherItem(this, "Wool", 20, false),
-		    new GetItemFromBank(this, "Wool", Bank.WithdrawMode.ITEM, true)
-		};
+	        //TODO this approach isnt bullet proof if we end up banking
+		Task shearSheep = new ShearSheep(20, this);
+		// We might not have all wools in out inventory after shearSheep is completed.
+  		Task getFromBank = new GetItemFromBank(this, "Wool", Bank.WithdrawMode.ITEM, 20);
+  		Task[] tasks = new Task[] { shearSheep, getFromBank };
+		return tasks;
 	    }
 	};
-
 	Task spin = new SpinBallOfWool(null);
-	TreeNode spinWool = new BinaryBranch()
-	{
-	    @Override public TreeNode failureNode() {
-		return new LeafNode(getWool);
-	    }
+	TreeNode needMoreWool = BinaryBranchBuilder.getNewInstance()
+		.successNode(spin)
+		.setValidation(() -> Inventory.getCount("Wool") + Inventory.getCount("Ball of wool") == 20)
+		.failureNode(getWool)
+		.build();
+	TreeNode giveFredTheBalls = new ProcessDialogTree("I'm back!", FRED_THE_FARMER);
+	TreeNode atFred2 = new InArea(giveFredTheBalls, CommonLocation.LUMBRIDGE_FREDTHEFARMER, 1);
+	TreeNode hasBallOfWool = BinaryBranchBuilder.getNewInstance()
+		.successNode(atFred2)
+		.setValidation(() -> Inventory.getCount("Ball of wool") == 20)
+		.failureNode(needMoreWool)
+		.build();
 
-	    @Override public TreeNode successNode() {
-		return new LeafNode(spin);
-	    }
 
-	    @Override public boolean validate() {
-		return Inventory.getCount("Wool") + Inventory.getCount("Ball of wool") == 20;
-	    }
-	};
-
-	/*
-	Give the balls to Fred
-	 */
-	Task walkToFred = new MoveTo(Location.LUMBRIDGE_FREDTHEFARMER, 2);
-	Deque<String> dialogOptions = new ArrayDeque<>();
-	dialogOptions.addLast("I'm back!");
-	TreeNode talkToFred = new DoDialogTree(dialogOptions, "Fred the Farmer");
-	TreeNode atFred = new BinaryBranch()
-	{
-	    @Override public TreeNode failureNode() {
-		return new LeafNode(walkToFred);
-	    }
-
-	    @Override public TreeNode successNode() {
-		return talkToFred;
-	    }
-
-	    @Override public boolean validate() {
-		return Location.LUMBRIDGE_FREDTHEFARMER.getArea().contains(Players.getLocal());
-	    }
-	};
-
-	TreeNode giveFredBalls = new BinaryBranch()
-	{
-	    @Override public TreeNode failureNode() {
-		return spinWool;
-	    }
-
-	    @Override public TreeNode successNode() {
-		return atFred;
-	    }
-
-	    @Override public boolean validate() {
-		return Inventory.getCount("Ball of wool") == 20;
-	    }
-	};
-	varpTable.put(1, giveFredBalls);
+	quest.put(1, hasBallOfWool);
 
 	// We just need to click continue a couple of times
-	TreeNode finish = new TalkToNpcAndContinue("Fred the Farmer", null);
-	varpTable.put(20, finish);
-	return new QuestBranch(varp, varpTable);
+	TreeNode finish = new TalkToNpc(FRED_THE_FARMER);
+	TreeNode atFred3 = new InArea(finish, CommonLocation.LUMBRIDGE_FREDTHEFARMER, 1);
+	quest.put(20, atFred3);
+
+	return quest;
     }
 
     @Override public boolean validate() {
-	return Varps.get(varp) == FreeQuest.SHEEP_SHEARER.getStages();
+	return Varps.get(Quest.SHEEP_SHEARER.getVarpbit()) == Quest.SHEEP_SHEARER.getStages();
     }
 }

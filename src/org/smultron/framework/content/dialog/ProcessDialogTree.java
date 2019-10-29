@@ -21,6 +21,8 @@ import java.util.function.Supplier;
 /**
  * Processes dialog options and continues
  * Validates when all options has been processed and the dialog is no longer open.
+ *
+ * TODO Check out the String... thingy
  */
 public class ProcessDialogTree extends BinaryBranch
 {
