@@ -30,8 +30,6 @@ import java.util.function.BooleanSupplier;
  */
 public class CooksAssistant extends TreeTask
 {
-    private final int varp = Quest.COOKS_ASSISTANT.getVarpbit();
-
     public CooksAssistant(final TaskListener listener)
     {
         super(listener, "Completing Cooks Assistant.");
@@ -39,7 +37,7 @@ public class CooksAssistant extends TreeTask
 
     @Override
     public TreeNode onCreateRoot() {
-        VarpBranch quest = new VarpBranch(varp);
+        VarpBranch quest = new VarpBranch(Quest.COOKS_ASSISTANT.getVarpbit());
 
         /*
         Start the quest
@@ -107,6 +105,6 @@ public class CooksAssistant extends TreeTask
     }
 
     @Override public boolean validate() {
-        return Varps.get(varp) == Quest.COOKS_ASSISTANT.getStages();
+        return Varps.get(Quest.COOKS_ASSISTANT.getVarpbit()) == Quest.COOKS_ASSISTANT.getStages();
     }
 }

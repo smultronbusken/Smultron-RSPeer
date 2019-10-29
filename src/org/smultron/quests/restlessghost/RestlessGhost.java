@@ -39,17 +39,13 @@ import java.util.function.BooleanSupplier;
  */
 public class RestlessGhost extends TreeTask
 {
-    private int varpBit = Quest.THE_RESTLESS_GHOST.getVarpbit();
-    private int questStages = Quest.THE_RESTLESS_GHOST.getStages();
-
-
     public RestlessGhost(TaskListener listener) {
 	super(listener, "Completing The Restless Ghost");
     }
 
     @Override public TreeNode onCreateRoot() {
         BooleanSupplier isGhostLoaded = () -> Npcs.getLoaded(npc -> npc.getName().equals("Restless ghost")) != null;
-        VarpBranch quest = new VarpBranch(varpBit);
+        VarpBranch quest = new VarpBranch(Quest.THE_RESTLESS_GHOST.getVarpbit());
 
         String[] dialogAereck = new String[] { "I'm looking for a quest!", "Ok, let me help then." };
         TreeNode talkAereck = new ProcessDialogTree(dialogAereck, () -> Npcs.getNearest("Father Aereck"));
@@ -82,7 +78,7 @@ public class RestlessGhost extends TreeTask
     }
 
     @Override public boolean validate() {
-	return Varps.get(varpBit) == questStages;
+	return Varps.get(Quest.THE_RESTLESS_GHOST.getVarpbit()) == Quest.THE_RESTLESS_GHOST.getStages();
     }
 
     private TreeNode hasGhostspeakAmulet(TreeNode successNode) {

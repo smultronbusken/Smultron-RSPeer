@@ -1,6 +1,5 @@
 package org.smultron.quests.sheepshearer;
 
-import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.Production;
 import org.rspeer.runetek.api.component.tab.Inventory;
@@ -23,7 +22,7 @@ public class SpinBallOfWool extends TreeTask
     }
 
     @Override public TreeNode onCreateRoot() {
-	Task openSpinWheel = new UseItemOn<SceneObject>(() -> Inventory.getFirst("Wool"), () -> SceneObjects.getNearest("Spinning wheel"));
+	Task openSpinWheel = new UseItemOn<>(() -> Inventory.getFirst("Wool"), () -> SceneObjects.getNearest("Spinning wheel"));
 	Task produce = new ProduceItem(null, "Ball of wool");
         Task fillInventory = new GetItemFromBank(null, "Wool", Bank.WithdrawMode.ITEM, 20);
 

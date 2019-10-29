@@ -31,8 +31,6 @@ import java.util.function.Supplier;
  */
 public class XMarksTheSpot extends TreeTask
 {
-    private int varpBit = Quest.X_MARKS_THE_SPOT.getVarpbit();
-    private int questStages = Quest.X_MARKS_THE_SPOT.getStages();
 
     private static final Supplier<Npc> VEOS = () -> Npcs.getNearest("Veos");
 
@@ -41,7 +39,7 @@ public class XMarksTheSpot extends TreeTask
     }
 
     @Override public TreeNode onCreateRoot() {
-	VarpBranch quest = new VarpBranch(varpBit);
+	VarpBranch quest = new VarpBranch(Quest.X_MARKS_THE_SPOT.getVarpbit());
 
 	/*
 	Start quest
@@ -95,7 +93,9 @@ public class XMarksTheSpot extends TreeTask
     }
 
     @Override public boolean validate() {
-	return Varps.get(varpBit) > 7;
+        // For some reason the varpbit doesnt stay on a value after completing the quest
+	// But it does seem to always stay over 7
+	return Varps.get(Quest.X_MARKS_THE_SPOT.getVarpbit()) > 7;
     }
 
     private TreeNode walkToAndDig(Position cluePosition) {

@@ -69,7 +69,7 @@ public class RomeoAndJuliet extends TreeTask
 
 
     @Override public TreeNode onCreateRoot() {
-	VarpBranch quest = new VarpBranch(varpBit);
+	VarpBranch quest = new VarpBranch(Quest.ROMEO_AND_JULIET.getVarpbit());
         Task walkToJuliet = new MoveTo(CommonLocation.VARROCK_JULIET, 0);
 
         /*

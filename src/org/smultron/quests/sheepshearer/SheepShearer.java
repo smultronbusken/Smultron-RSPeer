@@ -5,7 +5,6 @@ import org.rspeer.runetek.api.Varps;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.scene.Npcs;
-import org.rspeer.runetek.api.scene.Players;
 import org.smultron.framework.content.banking.GetItemFromBank;
 import org.smultron.framework.content.dialog.ProcessDialogTree;
 import org.smultron.framework.content.dialog.TalkToNpc;
@@ -17,19 +16,15 @@ import org.smultron.framework.tasks.Task;
 import org.smultron.framework.tasks.TaskListener;
 import org.smultron.framework.thegreatforest.BinaryBranchBuilder;
 import org.smultron.framework.thegreatforest.InArea;
-import org.smultron.framework.thegreatforest.LeafNode;
 import org.smultron.framework.thegreatforest.TreeNode;
 import org.smultron.framework.thegreatforest.TreeTask;
-import org.smultron.framework.thegreatforest.BinaryBranch;
 import org.smultron.framework.thegreatforest.VarpBranch;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashMap;
 import java.util.function.Supplier;
 
+
 /**
- * TODO: Movement after shearing is fkced.
+ * Assumes we have 21 free slots
  */
 public class SheepShearer extends TreeTask
 {

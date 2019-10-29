@@ -31,9 +31,6 @@ import java.util.function.BooleanSupplier;
 
 public class DoricsQuest extends TreeTask
 {
-    private int varpBit = Quest.DORICS_QUEST.getVarpbit();
-    private int questStages = Quest.DORICS_QUEST.getStages();
-
     public DoricsQuest(final TaskListener listener) {
 	super(listener, "Completing Dorics Quest");
     }
@@ -41,7 +38,7 @@ public class DoricsQuest extends TreeTask
     private static final Location DORICS_HOUSE = Location.location(Area.rectangular(2950, 3449, 2953, 3452), "Doric");
 
     @Override public TreeNode onCreateRoot() {
-	VarpBranch quest = new VarpBranch(varpBit);
+	VarpBranch quest = new VarpBranch(Quest.DORICS_QUEST.getVarpbit());
 
 	String[] dialog = new String[]{
 		"I wanted to use your anvils.",
@@ -59,7 +56,7 @@ public class DoricsQuest extends TreeTask
     }
 
     @Override public boolean validate() {
-	return Varps.get(varpBit) == questStages;
+	return Varps.get(Quest.DORICS_QUEST.getVarpbit()) == Quest.DORICS_QUEST.getStages();
     }
 
     private TreeNode hasItems(TreeNode successNode) {

@@ -28,9 +28,6 @@ import java.util.function.Supplier;
 
 public class ImpCatcher extends TreeTask
 {
-    private int varpBit = Quest.IMP_CATCHER.getVarpbit();
-    private int questStages = Quest.IMP_CATCHER.getStages();
-
     private static final Location WIZARD_MIZGOG = Location.location(Area.polygonal(new Position(3107, 3162, 2),
 										   new Position(3107, 3156, 2),
 										   new Position(3103, 3159, 2),
@@ -43,7 +40,7 @@ public class ImpCatcher extends TreeTask
     }
 
     @Override public TreeNode onCreateRoot() {
-        VarpBranch quest = new VarpBranch(varpBit);
+        VarpBranch quest = new VarpBranch(Quest.IMP_CATCHER.getVarpbit());
 	Supplier<Npc> mizgog = () -> Npcs.getNearest("Wizard Mizgog");
 
 	TreeNode startDialog = new ProcessDialogTree("Give me a quest please.", mizgog);
@@ -58,7 +55,7 @@ public class ImpCatcher extends TreeTask
     }
 
     @Override public boolean validate() {
-	return Varps.get(varpBit) == questStages;
+	return Varps.get(Quest.IMP_CATCHER.getVarpbit()) == Quest.IMP_CATCHER.getStages();
     }
 
     private TreeNode hasItems(TreeNode successNode) {
