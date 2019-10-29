@@ -3,33 +3,35 @@ package org.smultron.quests.restlessghost;
 import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.Varps;
 import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.component.ItemTables;
 import org.rspeer.runetek.api.component.tab.Equipment;
+import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.api.scene.SceneObjects;
-import org.smultron.framework.Task;
-import org.smultron.framework.TaskListener;
-import org.smultron.framework.tasks.dialog.DoDialogTree;
-import org.smultron.framework.tasks.atoms.InteractWithNearestObject;
-import org.smultron.framework.tasks.atoms.UseItemOnSceneObject;
-import org.smultron.framework.tasks.inventory.WearEquipment;
-import org.smultron.framework.tasks.movement.MoveTo;
+import org.rspeer.ui.Log;
+import org.smultron.framework.Location;
+import org.smultron.framework.content.InteractWith;
+import org.smultron.framework.content.UseItemOn;
+import org.smultron.framework.content.dialog.ProcessDialogTree;
+import org.smultron.framework.info.CommonLocation;
+import org.smultron.framework.info.Quest;
+import org.smultron.framework.tasks.FunctionalTask;
+import org.smultron.framework.tasks.Task;
+import org.smultron.framework.tasks.TaskListener;
+import org.smultron.framework.thegreatforest.BinaryBranchBuilder;
+import org.smultron.framework.thegreatforest.InArea;
 import org.smultron.framework.thegreatforest.LeafNode;
 import org.smultron.framework.thegreatforest.TreeNode;
 import org.smultron.framework.thegreatforest.TreeTask;
 import org.smultron.framework.thegreatforest.BinaryBranch;
-import org.smultron.framework.thegreatforest.QuestBranch;
-import org.smultron.info.FreeQuest;
-import org.smultron.info.Location;
-import org.smultron.info.SceneobjectAction;
+import org.smultron.framework.thegreatforest.VarpBranch;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
+
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
+import java.util.function.BooleanSupplier;
 
 /**
  * TODO: Make sure we are wearing the amulet does not work if the user pauses midquest and drops it
@@ -37,8 +39,8 @@ import java.util.HashMap;
  */
 public class RestlessGhost extends TreeTask
 {
-    private int varpBit = FreeQuest.THE_RESTLESS_GHOST.getVarpbit();
-    private int questStages = FreeQuest.THE_RESTLESS_GHOST.getStages();
+    private int varpBit = Quest.THE_RESTLESS_GHOST.getVarpbit();
+    private int questStages = Quest.THE_RESTLESS_GHOST.getStages();
 
 
     public RestlessGhost(TaskListener listener) {
@@ -46,171 +48,62 @@ public class RestlessGhost extends TreeTask
     }
 
     @Override public TreeNode onCreateRoot() {
-        /*
-        Start quest
-         */
-        Task moveToChurch = new MoveTo(Location.LUMBRIDGE_CHURCH, 6);
-        Deque<String> dialogAereck = new ArrayDeque<>();
-        dialogAereck.addLast("I'm looking for a quest!");
-        dialogAereck.addLast("Ok, let me help then.");
-        TreeNode talkAereck = new DoDialogTree(dialogAereck, "Father Aereck");
-        TreeNode startQuest = new BinaryBranch()
-        {
-            @Override public TreeNode failureNode() {
-                return new LeafNode(moveToChurch);
-            }
+        BooleanSupplier isGhostLoaded = () -> Npcs.getLoaded(npc -> npc.getName().equals("Restless ghost")) != null;
+        VarpBranch quest = new VarpBranch(varpBit);
 
-            @Override public TreeNode successNode() {
-                return talkAereck;
-            }
+        String[] dialogAereck = new String[] { "I'm looking for a quest!", "Ok, let me help then." };
+        TreeNode talkAereck = new ProcessDialogTree(dialogAereck, () -> Npcs.getNearest("Father Aereck"));
+        TreeNode atAereck = new InArea(talkAereck, CommonLocation.LUMBRIDGE_CHURCH, 3);
+        quest.put(0, atAereck);
 
-            @Override public boolean validate() {
-                return Location.LUMBRIDGE_CHURCH.getArea().contains(Players.getLocal());
-            }
-        };
+        String[] dialogUrhney = new String[] { "Father Aereck sent me to talk to you.", "He's got a ghost haunting his graveyard." };
+        TreeNode talkUrhney = new ProcessDialogTree(dialogUrhney, () -> Npcs.getNearest("Father Urhney"));
+        TreeNode atUrhney = new InArea(talkUrhney, CommonLocation.LUMBRIDGE_FATHER_URHNEY, 1);
+        quest.put(1, atUrhney);
 
-        /*
-        Get the amulet
-         */
-        Task moveToFatherUrhney = new MoveTo(Location.LUMBRIDGE_FATHER_URHNEY, 2);
-        Deque<String> dialogUrhney = new ArrayDeque<>();
-        dialogUrhney.addLast("Father Aereck sent me to talk to you.");
-        dialogUrhney.addLast("He's got a ghost haunting his graveyard.");
-        TreeNode talkUrhney = new DoDialogTree(dialogUrhney, "Father Urhney");
-        TreeNode getAmulet = new BinaryBranch()
-        {
-            @Override public TreeNode failureNode() {
-                return new LeafNode(moveToFatherUrhney);
-            }
+        TreeNode talkToGhost = new ProcessDialogTree("Yep, now tell me what the problem is.", () -> Npcs.getNearest("Restless ghost"));
+        Task openCoffin = new InteractWith<>("Search", () -> SceneObjects.getNearest("Coffin"));
+        TreeNode isCoffinOpen = BinaryBranchBuilder.getNewInstance()
+                .successNode(talkToGhost)
+                .setValidation(isGhostLoaded)
+                .failureNode(openCoffin)
+                .build();
+        TreeNode atGhostGrave = new InArea(isCoffinOpen, CommonLocation.LUMBRIDGE_GHOST, 2);
+        quest.put(2, hasGhostspeakAmulet(atGhostGrave));
 
-            @Override public TreeNode successNode() {
-                return talkUrhney;
-            }
+        // Empty leaf node because the varp value will change as soon as we pick up the skull
+        quest.put(3, hasSkull(new LeafNode()));
 
-            @Override public boolean validate() {
-                return Location.LUMBRIDGE_FATHER_URHNEY.getArea().contains(Players.getLocal());
-            }
-        };
+        Task putSkull = new UseItemOn<>(() -> Inventory.getFirst("Ghost's skull"), () -> SceneObjects.getNearest("Coffin"));
+        TreeNode atGhostGraveAfterSkull = new InArea(putSkull, CommonLocation.LUMBRIDGE_GHOST, 2);
+        quest.put(4, hasSkull(hasGhostspeakAmulet(atGhostGraveAfterSkull)));
 
-        /*
-        Talk to the ghost
-         */
-        Task moveToGhost = new MoveTo(Location.LUMBRIDGE_GHOST, 3);
-        Task openCoffin = new InteractWithNearestObject("Coffin", SceneobjectAction.SEARCH);
-        Task equipAmulet = new WearEquipment(null, new ArrayList<>(Collections.singletonList("Ghostspeak amulet")));
-        Deque<String> dialogGhost = new ArrayDeque<>();
-        dialogGhost.addLast("Yep, now tell me what the problem is.");
-        TreeNode talkGhost = new DoDialogTree(dialogGhost, "Restless ghost");
-        TreeNode hasAmulet = new BinaryBranch()
-        {
-            @Override public TreeNode failureNode() {
-                return new LeafNode(equipAmulet);
-            }
-
-            @Override public TreeNode successNode() {
-                return talkGhost;
-            }
-
-            @Override public boolean validate() {
-                return Equipment.contains("Ghostspeak amulet");
-            }
-        };
-        TreeNode shouldOpenCoffin = new BinaryBranch()
-        {
-            @Override public TreeNode failureNode() {
-                return new LeafNode(openCoffin);
-            }
-
-            @Override public TreeNode successNode() {
-                return hasAmulet;
-            }
-
-            @Override public boolean validate() {
-
-                return Npcs.getLoaded(npc -> npc.getName().equals("Restless ghost")) != null;
-            }
-        };
-        TreeNode isAtGhost = new BinaryBranch()
-        {
-            @Override public TreeNode failureNode() {
-                return new LeafNode(moveToGhost);
-            }
-
-            @Override public TreeNode successNode() {
-                return shouldOpenCoffin;
-            }
-
-            @Override public boolean validate() {
-                return Location.LUMBRIDGE_GHOST.getArea().contains(Players.getLocal());
-            }
-        };
-
-        /*
-        Take the skull
-         */
-        Area altarRoom = Area.rectangular(3111, 9564, 3121, 9568);
-        Task moveToRoom = new MoveTo(altarRoom, 1);
-        Task takeSkull = new InteractWithNearestObject("Altar", SceneobjectAction.SEARCH);
-        TreeNode atAltar = new BinaryBranch()
-        {
-            @Override public TreeNode failureNode() {
-                return new LeafNode(moveToRoom);
-            }
-            @Override public TreeNode successNode() {
-                return new LeafNode(takeSkull);
-            }
-            @Override public boolean validate() {
-                return altarRoom.contains(Players.getLocal());
-            }
-        };
-
-        /*
-        Use the skull
-         */
-        Task putSkull = new UseItemOnSceneObject("Ghost's skull", "Coffin", null);
-        TreeNode canPutSkull = new BinaryBranch()
-        {
-            @Override public TreeNode failureNode() {
-                return new LeafNode(new InteractWithNearestObject("Coffin", SceneobjectAction.OPEN));
-            }
-
-            @Override public TreeNode successNode() {
-                Time.sleep(2000);
-                return new LeafNode(putSkull);
-            }
-
-            @Override public boolean validate() {
-                SceneObject coffin = SceneObjects.getNearest("Coffin");
-                return Arrays.asList(coffin.getActions()).contains("Close");
-            }
-        };
-        TreeNode isAtCoffin = new BinaryBranch()
-        {
-            @Override public TreeNode failureNode() {
-                return new LeafNode(moveToGhost);
-            }
-
-            @Override public TreeNode successNode() {
-                return canPutSkull;
-            }
-
-            @Override public boolean validate() {
-                return Location.LUMBRIDGE_GHOST.getArea().contains(Players.getLocal());
-            }
-        };
-
-        HashMap<Integer, TreeNode> questSections = new HashMap<>();
-        questSections.put(0, startQuest);
-        questSections.put(1, getAmulet);
-        questSections.put(2, isAtGhost);
-        questSections.put(3, atAltar);
-        questSections.put(4, isAtCoffin);
-        TreeNode varpBranch = new QuestBranch(FreeQuest.THE_RESTLESS_GHOST.getVarpbit(), questSections);
-
-        return varpBranch;
+        return quest;
     }
 
     @Override public boolean validate() {
 	return Varps.get(varpBit) == questStages;
+    }
+
+    private TreeNode hasGhostspeakAmulet(TreeNode successNode) {
+        BooleanSupplier inventoryContainsItem = () -> Inventory.contains(4250, 552) && ItemTables.lookup(ItemTables.EQUIPMENT).contains(4250, 552);
+        TreeNode hasItems = BinaryBranchBuilder.getNewInstance()
+                .successNode(successNode)
+                .setValidation(inventoryContainsItem)
+                .failureNode(new FunctionalTask(() -> Log.severe("I have note amulet"))) // TODO
+                .build();
+        return hasItems;
+    }
+
+    private TreeNode hasSkull(TreeNode successNode) {
+        Location altarRoom = Location.location(Area.rectangular(3111, 9564, 3121, 9568), " the altar room");
+        Task takeSkull = new InteractWith<>("Search", () -> SceneObjects.getNearest("Altar"));
+        TreeNode atAltar = new InArea(takeSkull, altarRoom, 3);
+        TreeNode hasSkull = BinaryBranchBuilder.getNewInstance()
+                .successNode(successNode)
+                .setValidation(() -> Inventory.contains("Skull"))
+                .failureNode(atAltar)
+                .build();
+        return hasSkull;
     }
 }

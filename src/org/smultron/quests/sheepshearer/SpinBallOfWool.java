@@ -14,7 +14,6 @@ import org.smultron.framework.thegreatforest.InArea;
 import org.smultron.framework.thegreatforest.BinaryBranchBuilder;
 import org.smultron.framework.thegreatforest.TreeNode;
 import org.smultron.framework.thegreatforest.TreeTask;
-import org.smultron.framework.info.Region;
 
 public class SpinBallOfWool extends TreeTask
 {
