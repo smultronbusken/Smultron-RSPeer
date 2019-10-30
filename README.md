@@ -1,6 +1,6 @@
 # Smultron RSPeer
 
-Just a personal project where I try to make some kind of framework for building a task based script. Main focus is tree tasks.
+Just a personal project where I try to make some kind of framework for building a task based script. Main focus is tree tasks. Main goal is a script which can do alot of things without the user actually manuallt switching to another script, akin to SimScape. 
 
 Not a lot of documentation and some outdated comments at the moment tho as ive made it mainly for myself.
 
