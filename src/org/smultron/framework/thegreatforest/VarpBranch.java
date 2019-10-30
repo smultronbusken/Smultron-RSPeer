@@ -46,6 +46,11 @@ public class VarpBranch extends TreeNode {
 		return iterator;
 	}
 
+	@Override
+	public boolean isLeaf() {
+		return false;
+	}
+
 	/**
 	 * Match the a varp value with a given {@link TreeNode}
 	 *

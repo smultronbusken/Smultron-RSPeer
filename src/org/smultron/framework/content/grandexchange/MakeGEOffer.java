@@ -5,6 +5,7 @@ import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.GrandExchange;
 import org.rspeer.runetek.api.component.GrandExchangeSetup;
+import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.providers.RSGrandExchangeOffer;
 import org.rspeer.runetek.providers.RSGrandExchangeOffer.Progress;
 import org.rspeer.runetek.providers.RSGrandExchangeOffer.Type;
@@ -47,8 +48,14 @@ public class MakeGEOffer extends TreeTask {
 	 * @param offerType            Specify if this is a buy or sell offer.
 	 * @param waitForOfferComplete If set to true, the task will wait for the offer to be completed and then collect it
 	 */
-	public MakeGEOffer(final TaskListener listener, String itemName, Type offerType, int quantity, boolean waitForOfferComplete, PriceStrategy priceStrategy) {
-		super(listener, "Making a " + offerType.name().toLowerCase() + " offer for " + quantity + " " + itemName + " on GE!");
+	public MakeGEOffer(final TaskListener listener,
+					   String itemName, Type offerType,
+					   int quantity, boolean waitForOfferComplete,
+					   PriceStrategy priceStrategy)
+	{
+		super(listener, "Making a " + offerType.name().toLowerCase() + " offer for " +
+						(quantity == ALL ? "all" : quantity) + " " + itemName + " on GE!");
+
 		this.itemName = itemName;
 		this.offerType = offerType;
 		this.quantity = quantity;
@@ -86,10 +93,17 @@ public class MakeGEOffer extends TreeTask {
 		Task openSetupTab = openSetupTabTask();
 		Task confirmOffer = confirmOfferTask();
 
+		BooleanSupplier isQuantityCorrect = () -> {
+			if (quantity == ALL) {
+				return 	GrandExchangeSetup.getQuantity() == Inventory.getCount(true, itemName);
+			}
+			return GrandExchangeSetup.getQuantity() == quantity;
+		};
+
 		// Set quantity
 		TreeNode setQuantityAndConfirm = BinaryBranchBuilder.getNewInstance()
 				.successNode(confirmOffer)
-				.setValidation(() -> GrandExchangeSetup.getQuantity() == quantity)
+				.setValidation(isQuantityCorrect)
 				.failureNode(setQuantity)
 				.build();
 
@@ -167,14 +181,14 @@ public class MakeGEOffer extends TreeTask {
 	 */
 	private TreeNode prerequisite(TreeNode startMakingOffer) {
 		if (offerType.equals(Type.BUY)) {
-			Task getFromBank = new GetItemFromBank(null, "Coins", Bank.WithdrawMode.ITEM, true);
+			Task getFromBank = new GetItemFromBank(null, "Coins", Bank.WithdrawMode.ITEM, MakeGEOffer.ALL);
 			return BinaryBranchBuilder.getNewInstance()
 					.successNode(startMakingOffer)
 					.setValidation(getFromBank::validate)
 					.failureNode(getFromBank)
 					.build();
 		} else if (offerType.equals(Type.SELL)) {
-			Task getItems = new GetItemFromBank(null, itemName, Bank.WithdrawMode.NOTE, quantity);
+			Task getItems = new GetItemFromBank(null, itemName, Bank.WithdrawMode.NOTE, MakeGEOffer.ALL);
 			return BinaryBranchBuilder.getNewInstance()
 					.successNode(startMakingOffer)
 					.setValidation(getItems::validate)

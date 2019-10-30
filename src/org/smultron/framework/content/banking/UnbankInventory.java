@@ -1,7 +1,9 @@
 package org.smultron.framework.content.banking;
 
+import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.ui.Log;
 import org.smultron.framework.tasks.FunctionalTask;
 import org.smultron.framework.tasks.Task;
 import org.smultron.framework.tasks.TaskListener;
@@ -30,6 +32,12 @@ public class UnbankInventory extends TreeTask {
 
 	@Override
 	public boolean validate() {
+		// TODO check if there are unbankable items in the inventory
+		// Temporary fix
+		Log.info(Inventory.getFreeSlots() - 1);
+		if(Inventory.contains("Antique lamp") && Inventory.getFreeSlots() - 1 == 26)
+			return true;
+
 		return Inventory.isEmpty();
 	}
 

@@ -45,6 +45,7 @@ public class ShearSheep extends TreeTask implements TaskListener {
 				Arrays.asList(npc.getActions()).contains("Shear") &&
 				CommonLocation.LUMBRIDGE_SHEEPS.asArea().contains(npc));
 		Task shear = new InteractWith<>("Shear", Npcs::getNearest, sheep);
+		shear.attachListener(this);
 		Task unbank = new UnbankInventory(this);
 
 		TreeNode atSheeps = new InArea(shear, CommonLocation.LUMBRIDGE_SHEEPS, 7);
@@ -65,7 +66,7 @@ public class ShearSheep extends TreeTask implements TaskListener {
 	@Override
 	public boolean validate() {
 		status = ", Wools collected: " + currentAmount + ". In bank: "
-				+ (BankCache.getInstance().mustCheckBank() ? BankCache.getInstance().getCount(true, "Wool") : "?");
+				+ (BankCache.getInstance().mustCheckBank() ? "?" : BankCache.getInstance().getCount(true, "Wool"));
 		return total() >= amount;
 	}
 

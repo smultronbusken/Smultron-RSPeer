@@ -5,6 +5,7 @@ import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.scene.Npcs;
 import org.smultron.framework.Location;
+import org.smultron.framework.content.banking.UnbankInventory;
 import org.smultron.framework.content.dialog.ProcessDialogTree;
 import org.smultron.framework.content.dialog.TalkToNpc;
 import org.smultron.framework.content.item.GatherItem;
@@ -32,7 +33,7 @@ public class DoricsQuest extends TreeTask {
 				"Yes, I will get you the materials.",
 				"Certainly, I'll be right back!"
 		};
-		TreeNode talkWithDoric = new ProcessDialogTree(dialog, () -> Npcs.getNearest("Doric"));
+		TreeNode talkWithDoric = new ProcessDialogTree(() -> Npcs.getNearest("Doric"), dialog);
 		TreeNode startQuest = new InArea(talkWithDoric, DORICS_HOUSE, 1);
 		quest.put(0, hasItems(startQuest));
 
@@ -54,7 +55,8 @@ public class DoricsQuest extends TreeTask {
 				Task getClay = new GatherItem(this, "Clay", 6, true);
 				Task getIronOre = new GatherItem(this, "Iron ore", 2, true);
 				Task getCopperOre = new GatherItem(this, "Copper ore", 4, true);
-				Task[] tasks = new Task[]{getClay, getIronOre, getCopperOre};
+				Task unnote = new UnbankInventory(this);
+				Task[] tasks = new Task[]{getClay, getIronOre, getCopperOre, unnote};
 				return tasks;
 			}
 		};

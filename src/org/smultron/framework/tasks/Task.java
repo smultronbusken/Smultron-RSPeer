@@ -41,7 +41,7 @@ public abstract class Task {
 
 	@Override
 	public String toString() {
-		return status != null && !status.isEmpty() ? name : name + status;
+		return status != null && !status.isEmpty() ? name + status : name;
 	}
 
 	protected void notifyListener() {
@@ -51,7 +51,6 @@ public abstract class Task {
 
 	public void reset() {
 		if (taskDebug) Log.info("Reseting task " + name);
-		status = null;
 	}
 
 	/**

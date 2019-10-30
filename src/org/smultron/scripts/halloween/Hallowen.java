@@ -43,12 +43,12 @@ public class Hallowen extends MullbarScript {
 	public Task nextTask() {
 		VarpBranch quest = new VarpBranch(2603);
 		quest.put(0, TALK_WITH_SNAILNECK);
-		quest.put(40960, new InArea(new ProcessDialogTree("Yes, of course!", EPIC_MAGER), START_AREA, 1));
-		TreeNode talkWithBob = new ProcessDialogTree("Yes, of course!", () -> Npcs.getNearest("Bob"));
+		quest.put(40960, new InArea(new ProcessDialogTree(EPIC_MAGER, "Yes, of course!"), START_AREA, 1));
+		TreeNode talkWithBob = new ProcessDialogTree(() -> Npcs.getNearest("Bob"), "About Halloween.");
 		TreeNode atAreaBob = new InArea(talkWithBob, BOBS_SHOP, 1);
 		quest.put(81920, atAreaBob);
 		quest.put(122880, CONTINUE_DIALOG);
-		TreeNode talkWithFather = new ProcessDialogTree("Yes, of course!", () -> Npcs.getNearest("Father Aereck"));
+		TreeNode talkWithFather = new ProcessDialogTree(() -> Npcs.getNearest("Father Aereck"), "About Halloween.");
 		TreeNode atChurch = new InArea(talkWithFather, CommonLocation.LUMBRIDGE_CHURCH, 3);
 		quest.put(122882, atChurch);
 		quest.put(164866, TALK_WITH_EPIC_MAGER);
@@ -81,7 +81,7 @@ public class Hallowen extends MullbarScript {
 				"Fight about it.",
 				"Put them in prison."
 		};
-		TreeNode answerQuestions = new InArea(new ProcessDialogTree(answers, SNAILNECK), START_AREA, 1);
+		TreeNode answerQuestions = new InArea(new ProcessDialogTree(SNAILNECK, answers), START_AREA, 1);
 
 		quest.put(369666, answerQuestions);
 		quest.put(377858, answerQuestions);

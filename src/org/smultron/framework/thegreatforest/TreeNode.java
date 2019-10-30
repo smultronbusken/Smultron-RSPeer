@@ -32,7 +32,6 @@ public abstract class TreeNode implements Iterable<TreeNode> {
 	protected TreeNode() {
 	}
 
-	public final boolean isLeaf() {
-		return !this.iterator().hasNext();
-	}
+	public abstract boolean isLeaf();
+
 }

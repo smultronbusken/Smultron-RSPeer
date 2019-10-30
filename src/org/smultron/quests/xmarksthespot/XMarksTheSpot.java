@@ -43,7 +43,7 @@ public class XMarksTheSpot extends TreeTask {
 				"I'm looking for a quest.",
 				"Sounds good, what should I do?"
 		};
-		TreeNode talkToVeos = new ProcessDialogTree(startDialog, VEOS);
+		TreeNode talkToVeos = new ProcessDialogTree(VEOS, startDialog);
 		TreeNode atVeos = new InArea(talkToVeos, CommonLocation.VEOS, 2);
 		quest.put(0, atVeos);
 		quest.put(1, new InArea(new TalkToNpc(VEOS), CommonLocation.VEOS, 2)); // Need to continue the dialogue a couple of times.
@@ -91,7 +91,7 @@ public class XMarksTheSpot extends TreeTask {
 	public boolean validate() {
 		// For some reason the varpbit doesnt stay on a value after completing the quest
 		// But it does seem to always stay over 7
-		return Varps.get(Quest.X_MARKS_THE_SPOT.getVarpbit()) > 19;
+		return Varps.get(Quest.X_MARKS_THE_SPOT.getVarpbit()) > 7;
 	}
 
 	private TreeNode walkToAndDig(Position cluePosition) {

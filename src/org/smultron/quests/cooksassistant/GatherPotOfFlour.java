@@ -59,10 +59,12 @@ public class GatherPotOfFlour extends TreeTask {
 		return new ArrayTask(null, "Operating mill.") {
 			@Override
 			protected Task[] createTasks() {
-				Task moveToHopper = new MoveTo(this, LUMBRIDGE_MILL_SECOND_FLOOR, 1);
+				Task moveToHopper = new MoveTo( LUMBRIDGE_MILL_SECOND_FLOOR, 1);
+				moveToHopper.attachListener(this);
 				Task fillHopper = new InteractWith<>("Fill", () -> SceneObjects.getNearest("Hopper"));
 				Task operateControls = new InteractWith<>("Operate", () -> SceneObjects.getNearest("Hopper controls"));
-				Task moveToBin = new MoveTo(this, LUMBRIDGE_MILL, 1);
+				Task moveToBin = new MoveTo(LUMBRIDGE_MILL, 1);
+				moveToBin.attachListener(this);
 				Task retrieveFlour = new InteractWith<>("Empty", () -> SceneObjects.getNearest("Flour bin"));
 
 				operateControls.attachListener(this);

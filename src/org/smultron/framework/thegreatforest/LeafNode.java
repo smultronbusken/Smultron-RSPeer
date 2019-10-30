@@ -64,5 +64,8 @@ public class LeafNode extends TreeNode {
 		return task.loop();
 	}
 
-	;
+	@Override
+	public boolean isLeaf() {
+		return true;
+	}
 }

@@ -71,7 +71,7 @@ public class GetDressed extends TreeTask {
 		});
 		TreeNode shouldGetDressed = BinaryBranchBuilder.getNewInstance()
 				.successNode(customize)
-				.setValidation(() -> Random.nextInt(20) == 1) // We want on average pick 20 different clothes.
+				.setValidation(() -> Random.nextInt(20) != 1) // We want on average pick 20 different clothes.
 				.failureNode(beDoneWithIt)
 				.build();
 		return shouldGetDressed;

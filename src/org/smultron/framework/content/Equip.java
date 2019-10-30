@@ -3,6 +3,7 @@ package org.smultron.framework.content;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.ItemTables;
 import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.ui.Log;
 import org.smultron.framework.tasks.ArrayTask;
 import org.smultron.framework.tasks.Task;
 import org.smultron.framework.tasks.TaskListener;
@@ -36,7 +37,13 @@ public class Equip extends ArrayTask {
 	 * @param wearOrWield whether the items uses "Wear" or "Wield" as interaction
 	 */
 	public Equip(final TaskListener listener, String[] equipment, EquipType wearOrWield) {
-		super(listener, "Wielding " + Arrays.toString(equipment));
+		super(listener, "Eqipping " + Arrays.toString(equipment));
+		this.equipment = equipment.clone();
+		this.wearOrWield = wearOrWield;
+	}
+
+	public Equip(final TaskListener listener, EquipType wearOrWield, String... equipment) {
+		super(listener, "Eqipping " + Arrays.toString(equipment));
 		this.equipment = equipment.clone();
 		this.wearOrWield = wearOrWield;
 	}
@@ -55,7 +62,7 @@ public class Equip extends ArrayTask {
 	@Override
 	public boolean validate() {
 		for (String itemName : equipment) {
-			if (isEquipped(itemName)) {
+			if (!isEquipped(itemName)) {
 				return false;
 			}
 		}

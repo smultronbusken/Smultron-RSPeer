@@ -47,6 +47,7 @@ public class InteractWith<T extends Identifiable & Interactable> extends SimpleT
 	public int execute() {
 		T target = supplier.get();
 		if (target != null) {
+			status = " on " + target.getName();
 			String[] actions = target.getActions();
 			for (int i = 0; i < actions.length; i++) {
 				if (actions[i].equals(action)) {

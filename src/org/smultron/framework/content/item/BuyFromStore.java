@@ -24,7 +24,7 @@ public class BuyFromStore extends TreeTask {
 	private Store store;
 
 	public BuyFromStore(final TaskListener listener, String itemName, int amount, Store store) {
-		super(listener, "Buying " + amount + " " + itemName + " from " + store.name());
+		super(listener, "Buying " + amount + " " + itemName + " from " + store.locationName());
 		this.itemName = itemName;
 		this.amount = amount;
 		this.store = store;

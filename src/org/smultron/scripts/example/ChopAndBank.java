@@ -35,7 +35,10 @@ public class ChopAndBank extends TreeTask {
 	@Override
 	public TreeNode onCreateRoot() {
 		Task chopTree = new InteractWith<>("Chop down", TREE_SUPPLIER);
+
+		// Walk to the area if we are not there.
 		TreeNode atTreeArea = new InArea(chopTree, Location.location(TREE_AREA, "the tree area"), 5);
+
 		Task dropInventory = new FunctionalTask(() -> {
 			for(Item log : Inventory.getItems(item -> item.getName().equals("Logs"))){
 				log.interact("Drop");

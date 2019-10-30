@@ -99,7 +99,7 @@ public class TutorialIsland extends TreeTask {
 	/*
 	  Gielinor Guide
 	 */
-		quest.put(2, new ProcessDialogTree("I am an experienced player.", gielinorGuide));
+		quest.put(2, new ProcessDialogTree(gielinorGuide, "I am an experienced player."));
 		quest.put(3, new LeafNode(openTab(Tab.OPTIONS)));
 		quest.put(7, new TalkToNpc(gielinorGuide));
 		quest.put(10, new InteractWith<SceneObject>("Open", () -> SceneObjects.getNearest("Door")));
@@ -142,8 +142,8 @@ public class TutorialIsland extends TreeTask {
 		quest.put(250, new MoveTo(MINING_INSTRUCTOR_AREA, 2));
 		quest.put(260, talkToMiningInstructor);
 		quest.put(270, new InteractWith<>("Prospect", () -> SceneObjects.getNearest("Rocks")));
-		quest.put(300, new InArea(new InteractWith<>("Mine", () -> SceneObjects.getNearest("Rocks")), Location.getHintArrow(), 2));
-		quest.put(310, new InArea(new InteractWith<>("Mine", () -> SceneObjects.getNearest("Rocks")), Location.getHintArrow(), 2));
+		quest.put(300, new InArea(new InteractWith<>("Mine", () -> SceneObjects.getNearest("Rocks")), Location.getHintArrow(), 0));
+		quest.put(310, new InArea(new InteractWith<>("Mine", () -> SceneObjects.getNearest("Rocks")), Location.getHintArrow(), 0));
 		quest.put(320, new InteractWith<>("Use", () -> SceneObjects.getNearest("Furnace")));
 		quest.put(330, talkToMiningInstructor);
 		quest.put(340, new InteractWith<>("Smith", () -> SceneObjects.getNearest("Anvil")));
@@ -209,6 +209,7 @@ public class TutorialIsland extends TreeTask {
 	/*
 	  Account Guide
 	 */
+		quest.put(525, talkToAccountGuide);
 		quest.put(530, talkToAccountGuide);
 		quest.put(531, openTab(Tab.ACCOUNT_MANAGEMENT));
 		quest.put(532, talkToAccountGuide);
@@ -216,7 +217,7 @@ public class TutorialIsland extends TreeTask {
 	/*
 	  Brother Brace
 	 */
-		quest.put(540, new MoveTo(null, BROTHER_BRACE_AREA, 1));
+		quest.put(540, new MoveTo(BROTHER_BRACE_AREA, 1));
 		quest.put(550, talkToBrotherBrace);
 		quest.put(560, openTab(Tab.PRAYER));
 		quest.put(570, talkToBrotherBrace);
@@ -246,7 +247,7 @@ public class TutorialIsland extends TreeTask {
 				"Yes.",
 				"No, I'm not planning to do that."
 		};
-		TreeNode nearMagicInstructor = new InArea(new ProcessDialogTree(magicInstructorDialog, magicInstructor), MAGIC_INSTRUCTOR_AREA, 2);
+		TreeNode nearMagicInstructor = new InArea(new ProcessDialogTree(magicInstructor, magicInstructorDialog), MAGIC_INSTRUCTOR_AREA, 2);
 		quest.put(670, nearMagicInstructor);
 
 		return quest;

@@ -40,53 +40,26 @@ public class CooksAssistant extends TreeTask {
 				"What's wrong?",
 				"I'm always happy to help a cook in distress."
 		};
-		TreeNode speak = new ProcessDialogTree(startQuestDialog, () -> Npcs.getNearest("Cook"));
+		TreeNode speak = new ProcessDialogTree(() -> Npcs.getNearest("Cook"), startQuestDialog);
 		TreeNode atCooksKitchen = new InArea(speak, CommonLocation.LUMBRIDGE_COOK, 3);
 		quest.put(0, atCooksKitchen);
 
         /*
         Gather all ingredients, then speak with the Cook
          */
-		TreeNode giveCookAllItems = new TalkToNpc(() -> Npcs.getNearest("Cook"));
-		TreeNode atCooksKitchen2 = new InArea(giveCookAllItems, CommonLocation.LUMBRIDGE_COOK, 3);
-
 		Task gatherEgg = new GatheringTasks.GatherEgg(null);
 		Task gatherMilk = new GatherBucketOfMilk(null);
 		Task gatherFlour = new GatherPotOfFlour(null);
-
-		BooleanSupplier hasEgg = () -> Inventory.contains("Egg");
-		BooleanSupplier hasMilk = () -> Inventory.contains("Bucket of milk");
-		BooleanSupplier hasFlour = () -> Inventory.contains("Pot of flour");
-
-		TreeNode shouldGatherFlour = BinaryBranchBuilder.getNewInstance()
-				.successNode(new FunctionalTask(() -> Log.fine("I have gathered all the items!")))
-				.setValidation(hasFlour)
-				.failureNode(gatherFlour)
-				.build();
-		TreeNode shouldGatherMilk = BinaryBranchBuilder.getNewInstance()
-				.successNode(shouldGatherFlour)
-				.setValidation(hasMilk)
-				.failureNode(gatherMilk)
-				.build();
-		TreeNode shouldGatherEgg = BinaryBranchBuilder.getNewInstance()
-				.successNode(shouldGatherMilk)
-				.setValidation(hasEgg)
-				.failureNode(gatherEgg)
-				.build();
-		TreeNode hasAllItems = BinaryBranchBuilder.getNewInstance()
-				.successNode(atCooksKitchen2)
-				.setValidation(() -> hasEgg.getAsBoolean() && hasMilk.getAsBoolean() && hasFlour.getAsBoolean())
-				.failureNode(shouldGatherEgg)
-				.build();
-
-
 		Task talkTo = new TalkToNpc(() -> Npcs.getNearest("Cook")).asTask(null, "");
 		Task getItemsAndReturn = new ArrayTask(null, "") {
 			@Override
 			protected Task[] createTasks() {
-				Task moveTo = new MoveTo(this, CommonLocation.LUMBRIDGE_COOK, 3);
+				Task moveTo = new MoveTo(CommonLocation.LUMBRIDGE_COOK, 3);
+				moveTo.attachListener(this);
 				Task[] tasks = new Task[]{
-						hasAllItems.asTask(this, "Getting all items"),
+						gatherEgg,
+						gatherMilk,
+						gatherFlour,
 						moveTo,
 						talkTo
 				};

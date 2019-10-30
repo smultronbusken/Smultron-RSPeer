@@ -25,7 +25,11 @@ public abstract class SimpleTask extends Task {
 
 	@Override
 	final public boolean validate() {
-		return done;
+		if (done) {
+			reset();
+			return true;
+		}
+		return false;
 	}
 
 	@Override

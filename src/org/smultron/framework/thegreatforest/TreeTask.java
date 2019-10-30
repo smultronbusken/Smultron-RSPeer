@@ -31,7 +31,10 @@ public abstract class TreeTask extends Task {
 		while (currentNode.iterator().hasNext()) {
 			currentNode = currentNode.iterator().next();
 		}
-		int returnValue = ((LeafNode) currentNode).executeTask();
+		int returnValue = 500;
+		if(currentNode.isLeaf()) {
+			returnValue = ((LeafNode) currentNode).executeTask();
+		}
 		currentNode = root;
 		return returnValue;
 	}

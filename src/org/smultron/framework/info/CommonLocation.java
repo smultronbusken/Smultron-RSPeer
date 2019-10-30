@@ -20,7 +20,7 @@ public enum CommonLocation implements Location {
 
 	LUMBRIDGE_WHEATFIELD(Area.rectangular(3154, 3295, 3162, 3300), "the wheatfield in Lumbridge"),
 
-	LUMBRIDGE_FREDTHEFARMER(Area.rectangular(3188, 3275, 3192, 3270), "Fred the Farmer in Lumbridge"),
+	LUMBRIDGE_FREDTHEFARMER(Area.rectangular(3184, 3270, 3192, 3279), "Fred the Farmer in Lumbridge"),
 
 	LUMBRIDGE_SHEEPS(Area.polygonal(new Position(3193, 3276, 0), new Position(3204, 3276, 0),
 			new Position(3206, 3274, 0), new Position(3211, 3274, 0),

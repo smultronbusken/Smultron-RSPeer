@@ -51,9 +51,7 @@ public class GatherItems extends TreeNode {
 		iterator = new Iterator<TreeNode>() {
 			@Override
 			public boolean hasNext() {
-				Predicate<String> notInInventory = item -> !Inventory.contains(item);
-				int itemsMissing = (int) items.stream().filter(notInInventory).count();
-				return itemsMissing != 0;
+				return !Inventory.containsAll((String[])items.toArray());
 			}
 
 			@Override
@@ -70,4 +68,8 @@ public class GatherItems extends TreeNode {
 	}
 
 
+	@Override
+	public boolean isLeaf() {
+		return false;
+	}
 }

@@ -80,7 +80,8 @@ public final class GatheringTasks {
 
 		@Override
 		protected Task[] createTasks() {
-			Task moveToFarm = new MoveTo(this, CommonLocation.LUMBRIDGE_GROATS_FARM, 2);
+			Task moveToFarm = new MoveTo(CommonLocation.LUMBRIDGE_GROATS_FARM, 2);
+			moveToFarm.attachListener(this);
 			Task takeEgg = new InteractWith<>("Take", () -> Pickables.getNearest("Egg"));
 			takeEgg.attachListener(this);
 			Task[] tasks = new Task[]{moveToFarm, takeEgg};
@@ -98,7 +99,8 @@ public final class GatheringTasks {
 
 		@Override
 		protected Task[] createTasks() {
-			Task move = new MoveTo(this, CommonLocation.LUMBRIDGE_FREDTHEFARMER, 2);
+			Task move = new MoveTo(CommonLocation.LUMBRIDGE_FREDTHEFARMER, 2);
+			move.attachListener(this);
 			Task pickUp = new InteractWith<>("Take", () -> Pickables.getNearest("Shears"));
 			pickUp.attachListener(this);
 			Task[] tasks = new Task[]{move, pickUp};

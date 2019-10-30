@@ -51,12 +51,17 @@ public class BinaryBranch extends TreeNode {
 						return failureNode.get();
 					}
 				} catch (NullPointerException e) {
-					Log.severe("Could not find the next node. Validation, success node, or failure node was null");
+					Log.severe("Could not find the next node. Validation, success node, or failure node was null or threw an NPE");
 					return new LeafNode("Wwell, shiet i can t do anyting LMAO");
 				}
 			}
 		};
 		return binaryIterator;
+	}
+
+	@Override
+	public boolean isLeaf() {
+		return false;
 	}
 
 	/**

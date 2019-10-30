@@ -4,7 +4,6 @@ import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Dialog;
 import org.rspeer.ui.Log;
-import org.smultron.framework.MullbarRand;
 import org.smultron.framework.content.InteractWith;
 import org.smultron.framework.tasks.FunctionalTask;
 import org.smultron.framework.tasks.Task;
@@ -18,8 +17,6 @@ import java.util.function.Supplier;
 /**
  * Processes dialog options and continues
  * Validates when all options has been processed and the dialog is no longer open.
- * <p>
- * TODO Check out the String... thingy
  */
 public class ProcessDialogTree extends BinaryBranch {
 	private String[] options;
@@ -33,25 +30,11 @@ public class ProcessDialogTree extends BinaryBranch {
 	 *                The task will get stck if an option does not exist or the {@link Deque<String>} is out of order
 	 * @param npc     tries to Talk-to with this npc if the dialoge is not open
 	 */
-	public ProcessDialogTree(final String[] options, Supplier<Npc> npc) {
+	public ProcessDialogTree(Supplier<Npc> npc, final String... options) {
 		super();
 		this.options = options.clone();
 		this.npc = npc;
 		currentOption = options[0];
-		setSuccessNode(this::processDialog);
-		setValidation(this::validate);
-		setFailureNode(this::startDialog);
-	}
-
-	/**
-	 * @param option the option it will process
-	 * @param npc    tries to Talk-to with this npc if the dialoge is not open
-	 */
-	public ProcessDialogTree(String option, Supplier<Npc> npc) {
-		super();
-		this.options = new String[0];
-		this.npc = npc;
-		currentOption = option;
 		setSuccessNode(this::processDialog);
 		setValidation(this::validate);
 		setFailureNode(this::startDialog);
@@ -101,6 +84,6 @@ public class ProcessDialogTree extends BinaryBranch {
 
 	private boolean validate() {
 		Time.sleepUntil(() -> !Dialog.isProcessing(), 1000);
-		return Dialog.isOpen() && optionIndex < options.length;
+		return Dialog.isOpen() && optionIndex <= options.length;
 	}
 }

@@ -51,7 +51,7 @@ public abstract class MullbarGraphics implements RenderListener {
 		int widthMultiplier = tasks.stream().max((o1, o2) -> o2.length() < o1.length() ? 1 : -1).toString().length();
 		if (widthMultiplier * 6 < 220)
 			widthMultiplier = 36;
-		g.setColor(newColorWithAlpha(Color.BLACK, 180));
+		g.setColor(newColorWithAlpha(Color.BLACK, 130));
 		g.fillRect(x - 10, y - 20, 6 * widthMultiplier, yOffset + yIncrease * (heightMultiplier + 2));
 
         /*
@@ -66,7 +66,7 @@ public abstract class MullbarGraphics implements RenderListener {
 			g.drawString("I know how my bank looks like", x, yOffset);
 		} else {
 			g.setColor(Color.red);
-			g.drawString("I do NOT know how my bank looks like", x, yOffset);
+			g.drawString("I dont know how my bank looks like", x, yOffset);
 		}
 		yOffset += yIncrease;
 

@@ -4,6 +4,7 @@ import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.Bank.WithdrawMode;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.ui.Log;
+import org.smultron.framework.content.grandexchange.MakeGEOffer;
 import org.smultron.framework.tasks.FunctionalTask;
 import org.smultron.framework.tasks.Task;
 import org.smultron.framework.tasks.TaskListener;
@@ -20,20 +21,8 @@ public class GetItemFromBank extends TreeTask {
 	private String item;
 	private int amount;
 	private WithdrawMode mode;
-	private boolean withdrawAll = false;
 
 	public static boolean bankDebug = true;
-
-	/**
-	 *
-	 */
-	public GetItemFromBank(final TaskListener listener, final String item, WithdrawMode mode, boolean withdrawAll) {
-		super(listener, "Retrieving " + item + " from bank");
-		this.item = item;
-		this.mode = mode;
-		this.withdrawAll = true;
-		;
-	}
 
 	/**
 	 * @param amount Must be > 0
@@ -49,11 +38,10 @@ public class GetItemFromBank extends TreeTask {
 	public TreeNode onCreateRoot() {
 		Task withdrawItems = new FunctionalTask(() -> {
 			if (Bank.contains(i -> i.getName().equals(item))) {
-				if (withdrawAll) {
+				if (amount == MakeGEOffer.ALL)
 					Bank.withdrawAll(item);
-				} else if (Bank.getCount(item) >= amount) {
+				else
 					Bank.withdraw(item, amount);
-				}
 			}
 		}).setName("Withdrawing items...");
 		Task setWithdrawMode = new FunctionalTask(() -> Bank.setWithdrawMode(mode)).setName("Setting withdraw mode");
@@ -93,7 +81,7 @@ public class GetItemFromBank extends TreeTask {
 			return false;
 		}
 
-		if (withdrawAll) {
+		if (amount == MakeGEOffer.ALL) {
 			if (BankCache.getInstance().contains(item)) {
 				if (bankDebug) Log.fine("There are more " + item + "(s) in the bank.");
 				return false;
@@ -102,7 +90,7 @@ public class GetItemFromBank extends TreeTask {
 				return true;
 			}
 		} else {
-			if (Inventory.getCount(true, item) >= amount) {
+			if (Inventory.getCount(true, item) < amount) {
 				if (BankCache.getInstance().contains(item)) {
 					if (bankDebug) Log.fine("They are in the bank. Lets withdraw them. Returning false");
 					return false;

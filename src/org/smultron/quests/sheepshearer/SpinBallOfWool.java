@@ -4,6 +4,7 @@ import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.Production;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.scene.SceneObjects;
+import org.rspeer.ui.Log;
 import org.smultron.framework.content.UseItemOn;
 import org.smultron.framework.content.banking.GetItemFromBank;
 import org.smultron.framework.content.production.ProduceItem;
@@ -28,7 +29,10 @@ public class SpinBallOfWool extends TreeTask {
 
 		TreeNode isProductionScreenOpen = BinaryBranchBuilder.getNewInstance()
 				.successNode(produce)
-				.setValidation(Production::isOpen)
+				.setValidation(() -> {
+					Log.info(Production.isOpen());
+					return Production.isOpen();
+				})
 				.failureNode(openSpinWheel)
 				.build();
 		TreeNode atSpinningWheel = new InArea(isProductionScreenOpen, CommonLocation.LUMBRIDGE_SPINNINGWHEEL, 1);
@@ -39,6 +43,11 @@ public class SpinBallOfWool extends TreeTask {
 				.failureNode(fillInventory)
 				.build();
 		return hasWool;
+	}
+
+	@Override
+	public int execute() {
+		return super.execute();
 	}
 
 	@Override

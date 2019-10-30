@@ -35,7 +35,7 @@ public class SheepShearer extends TreeTask {
 		VarpBranch quest = new VarpBranch(Quest.SHEEP_SHEARER.getVarpbit());
 
 		String[] dialogOption = new String[]{"I'm looking for a quest.", "Yes okay. I can do that."};
-		TreeNode talkToFred = new ProcessDialogTree(dialogOption, FRED_THE_FARMER);
+		TreeNode talkToFred = new ProcessDialogTree(FRED_THE_FARMER, dialogOption);
 		TreeNode atFred = new InArea(talkToFred, CommonLocation.LUMBRIDGE_FREDTHEFARMER, 1);
 		quest.put(0, atFred);
 
@@ -59,7 +59,7 @@ public class SheepShearer extends TreeTask {
 				.setValidation(() -> Inventory.getCount("Wool") + Inventory.getCount("Ball of wool") == 20)
 				.failureNode(getWool)
 				.build();
-		TreeNode giveFredTheBalls = new ProcessDialogTree("I'm back!", FRED_THE_FARMER);
+		TreeNode giveFredTheBalls = new ProcessDialogTree(FRED_THE_FARMER, "I'm back!");
 		TreeNode atFred2 = new InArea(giveFredTheBalls, CommonLocation.LUMBRIDGE_FREDTHEFARMER, 1);
 		TreeNode hasBallOfWool = BinaryBranchBuilder.getNewInstance()
 				.successNode(atFred2)

@@ -20,6 +20,9 @@ import org.smultron.framework.tasks.TaskListener;
  * <p>
  * Does not handle noted items
  * Assumes unlimited inventory space
+ *
+ *
+ * TODO replace String parameter with Supplier<Item> items...
  */
 public class GatherItem extends ArrayTask {
 	private String item;

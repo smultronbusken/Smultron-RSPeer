@@ -6,6 +6,7 @@ import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Npcs;
+import org.rspeer.ui.Log;
 import org.smultron.framework.Location;
 import org.smultron.framework.content.dialog.ProcessDialogTree;
 import org.smultron.framework.content.dialog.TalkToNpc;
@@ -34,7 +35,7 @@ public class ImpCatcher extends TreeTask {
 		VarpBranch quest = new VarpBranch(Quest.IMP_CATCHER.getVarpbit());
 		Supplier<Npc> mizgog = () -> Npcs.getNearest("Wizard Mizgog");
 
-		TreeNode startDialog = new ProcessDialogTree("Give me a quest please.", mizgog);
+		TreeNode startDialog = new ProcessDialogTree(mizgog, "Give me a quest please.");
 		TreeNode atMizgogStart = new InArea(startDialog, WIZARD_MIZGOG, 1);
 		quest.put(0, hasItems(atMizgogStart));
 
@@ -55,7 +56,7 @@ public class ImpCatcher extends TreeTask {
 		TreeNode getItems = new GatherItems(Arrays.asList(items), null, true);
 		TreeNode hasItems = BinaryBranchBuilder.getNewInstance()
 				.successNode(successNode)
-				.setValidation(() -> Inventory.contains(items))
+				.setValidation(() -> Inventory.containsAll(items))
 				.failureNode(getItems)
 				.build();
 		return hasItems;

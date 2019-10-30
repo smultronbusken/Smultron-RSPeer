@@ -75,7 +75,7 @@ public class RomeoAndJuliet extends TreeTask {
 				"Yes I've met him.",
 				"Certainly, I'll do so straight away."
 		};
-		TreeNode talkToJuliet = new ProcessDialogTree(startQuestDialog, JULIET);
+		TreeNode talkToJuliet = new ProcessDialogTree(JULIET, startQuestDialog);
 		TreeNode startQuest = BinaryBranchBuilder.getNewInstance()
 				.successNode(talkToJuliet)
 				.setValidation(() -> CommonLocation.VARROCK_JULIET.asArea().contains(Players.getLocal()) || JULIET_PORCH.contains(Players.getLocal()))
@@ -104,7 +104,7 @@ public class RomeoAndJuliet extends TreeTask {
 				"Talk about something else.",
 				"Talk about Romeo & Juliet."
 		};
-		TreeNode talkToApothecary = new ProcessDialogTree(getPotionDialog, () -> Npcs.getNearest("Apothecary"));
+		TreeNode talkToApothecary = new ProcessDialogTree(() -> Npcs.getNearest("Apothecary"), getPotionDialog);
 		TreeNode atApothecary = new InArea(talkToApothecary, CommonLocation.VARROCK_APOTHECARY, 2);
 		quest.put(40, makeSureWeHaveCadava(atApothecary));
 
