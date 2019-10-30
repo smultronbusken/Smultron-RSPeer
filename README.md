@@ -1,6 +1,6 @@
 # Smultron RSPeer
 
-Just a personal project where I try to make some kind of framework for building a task based script. Main focus is ptree tasks.
+Just a personal project where I try to make some kind of framework for building a task based script. Main focus is tree tasks.
 
 # Example
 Heres how I would make a very basic script which chops wood at lumbridge. It drops the logs when the inventory is full.
