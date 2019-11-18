@@ -14,7 +14,7 @@ public abstract class Task {
 	/**
 	 * Set to true if ALL tasks should be printing debug.
 	 */
-	public static boolean taskDebug = false;
+	public static boolean taskDebug = true;
 	protected TaskListener listener = null; // TODO Make a list of listeners?
 	protected String name;
 	protected String status = "";

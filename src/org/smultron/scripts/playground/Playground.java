@@ -15,12 +15,13 @@ import org.smultron.framework.content.random.ShearSheep;
 import org.smultron.framework.info.CommonLocation;
 import org.smultron.framework.tasks.FunctionalTask;
 import org.smultron.framework.tasks.Task;
+import org.smultron.quests.cooksassistant.CooksAssistant;
 import org.smultron.quests.sheepshearer.ShearSheepAndSell;
 
 @ScriptMeta(desc = "playing around", developer = "smultron", name = "Playground")
 public class Playground extends MullbarScript {
 	@Override
 	public Task nextTask() {
-		return new UnbankInventory(null);
+		return new CooksAssistant(this);
 	}
 }

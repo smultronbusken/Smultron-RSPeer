@@ -28,7 +28,7 @@ public abstract class ArrayTask extends Task implements TaskListener {
 	@Override
 	public boolean validate() {
 		if (taskIndex == tasks.length) {
-			if (taskDebug && true) Log.fine("Just completed all sub tasks for " + name);
+			if (taskDebug) Log.fine("Just completed all sub tasks for " + name);
 			reset();
 			return true;
 		}
@@ -59,7 +59,7 @@ public abstract class ArrayTask extends Task implements TaskListener {
 
 	@Override
 	public void onTaskComplete(Task task) {
-		if (taskDebug && true)
+		if (taskDebug)
 			Log.fine("We completed " + task + " for the subscript " + name);
 		taskIndex++;
 	}

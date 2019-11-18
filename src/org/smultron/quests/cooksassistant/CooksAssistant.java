@@ -10,6 +10,7 @@ import org.smultron.framework.content.dialog.TalkToNpc;
 import org.smultron.framework.content.item.gathering.GatherBucketOfMilk;
 import org.smultron.framework.content.item.gathering.GatherPotOfFlour;
 import org.smultron.framework.content.item.gathering.GatheringTasks;
+import org.smultron.framework.content.item.gathering.GatheringTasks.GatherEgg;
 import org.smultron.framework.info.CommonLocation;
 import org.smultron.framework.info.Quest;
 import org.smultron.framework.tasks.ArrayTask;
@@ -47,21 +48,32 @@ public class CooksAssistant extends TreeTask {
         /*
         Gather all ingredients, then speak with the Cook
          */
-		Task gatherEgg = new GatheringTasks.GatherEgg(null);
-		Task gatherMilk = new GatherBucketOfMilk(null);
-		Task gatherFlour = new GatherPotOfFlour(null);
+
+		Task gatherItems = new ArrayTask(null, "Gathering the ingredients.")
+		{
+		    @Override protected Task[] createTasks() {
+			Task gatherEgg = new GatherEgg(this);
+			Task gatherMilk = new GatherBucketOfMilk(this);
+			Task gatherFlour = new GatherPotOfFlour(this);
+		        Task[] tasks = new Task[]{
+				gatherEgg,
+				gatherMilk,
+				gatherFlour
+			};
+			return tasks;
+		    }
+		};
+
+
 		Task talkTo = new TalkToNpc(() -> Npcs.getNearest("Cook")).asTask(null, "");
+		TreeNode atChef = new InArea(talkTo, CommonLocation.LUMBRIDGE_COOK, 3);
+
 		Task getItemsAndReturn = new ArrayTask(null, "") {
 			@Override
 			protected Task[] createTasks() {
-				Task moveTo = new MoveTo(CommonLocation.LUMBRIDGE_COOK, 3);
-				moveTo.attachListener(this);
+				gatherItems.attachListener(this);
 				Task[] tasks = new Task[]{
-						gatherEgg,
-						gatherMilk,
-						gatherFlour,
-						moveTo,
-						talkTo
+					gatherItems, atChef.asTask(this, "Giving the chef the ingredients.")
 				};
 				return tasks;
 			}
