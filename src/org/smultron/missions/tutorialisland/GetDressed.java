@@ -13,6 +13,8 @@ import org.smultron.framework.thegreatforest.TreeTask;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class GetDressed extends TreeTask {
 
@@ -24,29 +26,11 @@ public class GetDressed extends TreeTask {
 			"Love this one for sure."
 	));
 
-	private static final InterfaceComponent[] CUSTOMIZATION_BUTTONS = {
-			Interfaces.getComponent(269, 106),
-			Interfaces.getComponent(269, 107),
-			Interfaces.getComponent(269, 108),
-			Interfaces.getComponent(269, 109),
-			Interfaces.getComponent(269, 110),
-			Interfaces.getComponent(269, 111),
-			Interfaces.getComponent(269, 112),
-			Interfaces.getComponent(269, 113),
-			Interfaces.getComponent(269, 114),
-			Interfaces.getComponent(269, 115),
-			Interfaces.getComponent(269, 116),
-			Interfaces.getComponent(269, 117),
-			Interfaces.getComponent(269, 118),
-			Interfaces.getComponent(269, 119),
-			Interfaces.getComponent(269, 121),
-			Interfaces.getComponent(269, 122),
-			Interfaces.getComponent(269, 123),
-			Interfaces.getComponent(269, 124),
-			Interfaces.getComponent(269, 125),
-			Interfaces.getComponent(269, 129),
-			Interfaces.getComponent(269, 130),
-			Interfaces.getComponent(269, 131),
+	private static final Supplier<InterfaceComponent> CUSTOMIZATION_BUTTONS = () -> {
+	    Predicate<InterfaceComponent> p = ic -> ic.getToolTip().contains("Change") || ic.getToolTip().contains("Recolour");
+	    InterfaceComponent[] customizationButtons =  Interfaces.get(p);
+	    int l = customizationButtons.length;
+	    return customizationButtons[Random.nextInt(0, l)];
 	};
 
 	public GetDressed() {
@@ -56,7 +40,7 @@ public class GetDressed extends TreeTask {
 	@Override
 	public TreeNode onCreateRoot() {
 		Task customize = new FunctionalTask(() -> {
-			InterfaceComponent chosenButton = CUSTOMIZATION_BUTTONS[Random.nextInt(CUSTOMIZATION_BUTTONS.length - 1)];
+			InterfaceComponent chosenButton = CUSTOMIZATION_BUTTONS.get();
 			if (chosenButton != null) {
 				if (Interfaces.isVisible(chosenButton.toAddress()))
 					chosenButton.click();
