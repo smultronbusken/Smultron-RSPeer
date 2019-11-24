@@ -8,15 +8,16 @@ import org.smultron.framework.MullbarScript;
 import org.smultron.framework.tasks.FunctionalTask;
 import org.smultron.framework.tasks.Task;
 
+import java.util.function.Predicate;
+
 @ScriptMeta(desc = "playing around", developer = "smultron", name = "Playground")
 public class Playground extends MullbarScript {
 	@Override
 	public Task nextTask() {
 		return new FunctionalTask(() -> {
-		    InterfaceComponent[] chosenButton = Interfaces.get(ic -> {
-		        return ic.getToolTip().contains("Change") || ic.getToolTip().contains("Recolour");
-		    });
-		    Log.fine(chosenButton.length);
-		}).setName("lmao");
+			Predicate<InterfaceComponent> hasAcceptAction = ic -> ic.getToolTip().equals("Accept");
+			InterfaceComponent[] acceptButtons = Interfaces.get(hasAcceptAction);
+		    Log.fine(acceptButtons.length);
+		}).setName("bane");
 	}
 }

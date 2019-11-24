@@ -26,21 +26,21 @@ public class GetDressed extends TreeTask {
 			"Love this one for sure."
 	));
 
-	private static final Supplier<InterfaceComponent> CUSTOMIZATION_BUTTONS = () -> {
+	public GetDressed() {
+		super("Getting dressed.");
+	}
+
+	private static InterfaceComponent randomApperanceButton() {
 	    Predicate<InterfaceComponent> p = ic -> ic.getToolTip().contains("Change") || ic.getToolTip().contains("Recolour");
 	    InterfaceComponent[] customizationButtons =  Interfaces.get(p);
 	    int l = customizationButtons.length;
 	    return customizationButtons[Random.nextInt(0, l)];
-	};
-
-	public GetDressed() {
-		super("Getting dressed.");
 	}
 
 	@Override
 	public TreeNode onCreateRoot() {
 		Task customize = new FunctionalTask(() -> {
-			InterfaceComponent chosenButton = CUSTOMIZATION_BUTTONS.get();
+			InterfaceComponent chosenButton = randomApperanceButton();
 			if (chosenButton != null) {
 				if (Interfaces.isVisible(chosenButton.toAddress()))
 					chosenButton.click();
@@ -48,14 +48,15 @@ public class GetDressed extends TreeTask {
 			}
 		});
 		Task beDoneWithIt = new FunctionalTask(() -> {
-			InterfaceComponent acceptButton = Interfaces.getComponent(269, 99);
-			if (acceptButton != null) {
-				acceptButton.click();
+			Predicate<InterfaceComponent> hasAcceptAction = ic -> ic.getToolTip().equals("Accept");
+			InterfaceComponent[] acceptButtons = Interfaces.get(hasAcceptAction);
+			if (acceptButtons.length > 0) {
+				acceptButtons[0].click();
 			}
 		});
 		TreeNode shouldGetDressed = BinaryBranchBuilder.getNewInstance()
 				.successNode(customize)
-				.setValidation(() -> Random.nextInt(20) != 1) // We want on average pick 20 different clothes.
+				.setValidation(() -> Random.nextInt(12) != 1) // We want on average pick 12 different clothes.
 				.failureNode(beDoneWithIt)
 				.build();
 		return shouldGetDressed;
