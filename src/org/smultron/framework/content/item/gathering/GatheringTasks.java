@@ -87,6 +87,10 @@ public final class GatheringTasks {
 			Task[] tasks = new Task[]{moveToFarm, takeEgg};
 			return tasks;
 		}
+
+		@Override public boolean validate() {
+			return super.validate() || Inventory.contains("Egg");
+		}
 	}
 
 	/**
