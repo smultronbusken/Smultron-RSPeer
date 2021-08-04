@@ -2,7 +2,7 @@
 
 Just a personal project where I try to make some kind of framework for building a task based script with a lot of tasks already implemented. Performance is not the goal rather than a script which can do a lot of things. Main focus is tree tasks. 
 
-This API is built using [RSpeer](https://rspeer.org/)
+This framework is built using the [RSpeer](https://rspeer.org/) API.
 
 # Example
 Heres how I would make a very basic script which chops wood at lumbridge. It drops the logs when the inventory is full.
